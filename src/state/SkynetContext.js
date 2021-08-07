@@ -55,9 +55,7 @@ export default function SkynetContextProvider({ children }) {
   React.useEffect(() => {
     (async () => {
       if (user && state.mySky) {
-        if (state.skapps.length) {
-          setState((state) => ({ ...state, skapps: [] }));
-        }
+        setState((state) => ({ ...state, skapps: [] }));
 
         try {
           const { data: skapps } = await state.mySky.getJSON("localhost/skapps");
@@ -67,11 +65,10 @@ export default function SkynetContextProvider({ children }) {
           }
         } catch (error) {
           // no skapps yet
-          console.log(error);
         }
       }
     })();
-  }, [user, state.mySky, state.skapps.length]);
+  }, [user, state.mySky]);
 
   const authenticate = React.useCallback(() => {
     const execute = async () => {

@@ -8,10 +8,10 @@ function classNames(...classes) {
 }
 
 export default function SkappOptions({ skapp }) {
-  const { skapps, setSkapps, updateSkapp } = React.useContext(SkynetContext);
+  const { updateSkapp } = React.useContext(SkynetContext);
 
   const handleRemove = () => {
-    setSkapps(skapps.filter(({ skylink }) => skapp.skylink !== skylink));
+    updateSkapp(skapp.skylink, null);
   };
 
   const handleToggleFavorite = () => {
