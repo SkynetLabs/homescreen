@@ -37,6 +37,8 @@ export default function SkynetContextProvider({ children }) {
           const user = await mySky.userID();
 
           setState((state) => ({ ...state, user, mySky, mySkyInitialising: false, authenticating: false }));
+        } else {
+          setState((state) => ({ ...state, mySky, mySkyInitialising: false }));
         }
       } catch {
         setState((state) => ({ ...state, mySky, mySkyInitialising: false, authenticating: false }));
