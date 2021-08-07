@@ -7,6 +7,7 @@ import skynetClient from "../services/skynetClient";
 import SkappCard from "./SkappCard";
 import getSkappMetadata from "../services/getSkappMetadata";
 import { SkynetContext } from "../state/SkynetContext";
+import { ReactComponent as Cog } from "../svg/Cog.svg";
 
 export default function InstallFromSkylinkModal() {
   const { skylink } = useParams();
@@ -16,7 +17,7 @@ export default function InstallFromSkylinkModal() {
   const { updateSkapp } = React.useContext(SkynetContext);
   const [processing, setProcessing] = React.useState(false);
 
-  const cancelButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
   const handleConfirm = async () => {
@@ -38,13 +39,13 @@ export default function InstallFromSkylinkModal() {
   React.useEffect(() => {
     (async () => {
       if (skylink) {
+        setProcessing(true);
+
         const skylinkUrl = await skynetClient.getSkylinkUrl(skylink);
         const data = { skylink, skylinkUrl };
 
         try {
           const metadata = await getSkappMetadata(skylinkUrl);
-
-          console.log(metadata);
 
           if (metadata.title) data.name = metadata.title;
           if (metadata.description) data.description = metadata.description;
@@ -53,6 +54,7 @@ export default function InstallFromSkylinkModal() {
           // couldn't fetch metadata
         }
 
+        setProcessing(false);
         setSkappData(data);
       } else {
         setSkappData(null);
@@ -108,11 +110,18 @@ export default function InstallFromSkylinkModal() {
                       <p>
                         <Link href={skappData?.skylinkUrl}>{skylink}</Link>
                       </p>
-                      {skappData && (
-                        <p className="py-4">
+
+                      <div className="py-4">
+                        {skappData ? (
                           <SkappCard skapp={skappData} actions={false} />
-                        </p>
-                      )}
+                        ) : (
+                          <span className="flex items-center justify-center">
+                            <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
+                            skapp metadata, please wait
+                          </span>
+                        )}
+                      </div>
+
                       <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
                     </div>
                   )}
@@ -132,22 +141,15 @@ export default function InstallFromSkylinkModal() {
                   disabled={processing}
                   ref={acceptButtonRef}
                 >
-                  {processing ? "Processing..." : "Add to Homescreen"}
+                  {processing ? "Please wait" : "Add to Homescreen"}
                 </button>
                 <button
                   type="button"
-                  className={classNames(
-                    "mt-3 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:col-start-1 sm:text-sm",
-                    {
-                      "hover:bg-gray-50": !processing,
-                      "cursor-auto": processing,
-                    }
-                  )}
+                  className="hover:bg-palette-100 mt-3 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:col-start-1 sm:text-sm"
                   onClick={handleClose}
-                  disabled={processing}
-                  ref={cancelButtonRef}
+                  ref={closeButtonRef}
                 >
-                  Cancel
+                  Close
                 </button>
               </div>
             </div>

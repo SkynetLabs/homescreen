@@ -30,7 +30,7 @@ export default function SkappCard({ skapp, actions = true }) {
             {skapp.name ?? skapp.skylink}
           </Link>
 
-          <p className="text-gray-400 text-xs">{skapp.description ?? skapp.skylink}</p>
+          <p className="text-gray-400 text-xs truncate">{skapp.description ?? skapp.skylink}</p>
 
           {skapp.access && (
             <p className="text-gray-500 text-xs flex items-center flex-row">
