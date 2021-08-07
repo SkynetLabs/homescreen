@@ -69,7 +69,7 @@ export default function SkynetContextProvider({ children }) {
         }
       }
     })();
-  }, [user, state.mySky]);
+  }, [user, state.mySky, state.skapps.length]);
 
   const authenticate = React.useCallback(() => {
     const execute = async () => {
