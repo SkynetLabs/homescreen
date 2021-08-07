@@ -96,14 +96,13 @@ export default function Homescreen() {
         </main>
       </div>
 
-      <Switch>
-        {/* <Route path="/github/:owner/:repo">
-          <InstallFromGithubModal />
-        </Route> */}
-        <Route path="/skylink/:skylink?">
-          <InstallFromSkylinkModal />
-        </Route>
-      </Switch>
+      {user && (
+        <Switch>
+          <Route path="/skylink/:skylink?">
+            <InstallFromSkylinkModal />
+          </Route>
+        </Switch>
+      )}
     </div>
   );
 }
