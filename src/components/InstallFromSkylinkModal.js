@@ -22,8 +22,7 @@ export default function InstallFromSkylinkModal() {
 
   const handleConfirm = async () => {
     setProcessing(true);
-    await skynetClient.pinSkylink(skylink);
-    await updateSkapp(skylink, skappData);
+    await Promise.all([skynetClient.pinSkylink(skylink), updateSkapp(skylink, skappData)]);
     setProcessing(false);
 
     handleClose();
