@@ -1,7 +1,7 @@
 import * as React from "react";
 import skynetClient from "../services/skynetClient";
 
-const dataDomain = window.location.hostname === "localhost" ? "localhost" : "homescreen.hns";
+const dataDomain = window.location.hostname === "localhost" ? "localhost" : undefined;
 
 const transformSkapps = async (skapps) => {
   return Promise.all(
