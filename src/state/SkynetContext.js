@@ -1,7 +1,8 @@
 import * as React from "react";
 import skynetClient from "../services/skynetClient";
 
-const dataDomain = "localhost";
+const deploySkylink = "0405b1o5aj1g56mlodfamvjogqeksvakirqrh9fhsqkstkl670p25lo";
+const dataDomain = window.location.hostname === "localhost" ? "localhost" : deploySkylink;
 
 const transformSkapps = async (skapps) => {
   return Promise.all(
