@@ -30,7 +30,8 @@ export default function SkynetContextProvider({ children }) {
     const execute = async () => {
       setState((state) => ({ ...state, mySkyInitialising: true }));
 
-      const mySky = await skynetClient.loadMySky(dataDomain);
+      // TODO: remove dev: true once we hit production
+      const mySky = await skynetClient.loadMySky(dataDomain, { dev: true });
 
       try {
         const isAuthenticated = await mySky.checkLogin();
