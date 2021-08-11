@@ -22,10 +22,13 @@ export default function InstallFromSkylinkModal() {
 
   const handleConfirm = async () => {
     setProcessing(true);
-    await Promise.all([skynetClient.pinSkylink(skylink), updateSkapp(skylink, skappData)]);
+    try {
+      await Promise.all([skynetClient.pinSkylink(skylink), updateSkapp(skylink, skappData)]);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
     setProcessing(false);
-
-    handleClose();
   };
 
   const handleClose = () => {

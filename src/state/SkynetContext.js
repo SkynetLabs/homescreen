@@ -100,9 +100,7 @@ export default function SkynetContextProvider({ children }) {
   const setSkapps = React.useCallback(
     async (skapps) => {
       try {
-        console.log("trying to set skapps");
         await state.mySky.setJSON(`${dataDomain}/skapps`, skapps);
-        console.log("setJSON ok");
 
         const transformed = await transformSkapps(skapps);
 
@@ -110,15 +108,17 @@ export default function SkynetContextProvider({ children }) {
 
         return true;
       } catch (error) {
-        console.log("setJSON error");
-
         console.log(error);
 
         const { data: skapps } = await state.mySky.getJSON(`${dataDomain}/skapps`);
 
-        const transformed = await transformSkapps(skapps);
+        if (skapps) {
+          const transformed = await transformSkapps(skapps);
 
-        setState((state) => ({ ...state, skapps: transformed }));
+          setState((state) => ({ ...state, skapps: transformed }));
+        } else if (state.skapps.length) {
+          setState((state) => ({ ...state, skapps: [] }));
+        }
 
         return false;
       }
