@@ -6,7 +6,10 @@ const dataDomain = window.location.hostname === "localhost" ? "localhost" : depl
 
 const transformSkapps = async (skapps) => {
   return Promise.all(
-    skapps.map(async (skapp) => ({ ...skapp, skylinkUrl: await skynetClient.getSkylinkUrl(skapp.skylink) }))
+    skapps.map(async (skapp) => ({
+      ...skapp,
+      skylinkUrl: await skynetClient.getSkylinkUrl(skapp.skylink, { subdomain: true }),
+    }))
   );
 };
 
