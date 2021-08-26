@@ -24,11 +24,12 @@ export default function InstallFromSkylinkModal() {
     setProcessing(true);
     try {
       // todo: this should be native skynetClient.resolveSkylink call once we have it
-      const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
-      const { data } = await skynetClient.executeRequest({ url });
-      const { skylink: resolvedSkylink } = data;
+      // const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
+      // const skylink = skappData.skylink;
+      // const { data } = await skynetClient.executeRequest({ url });
+      // const { skylink: resolvedSkylink } = data;
 
-      await Promise.all([skynetClient.pinSkylink(resolvedSkylink), updateSkapp(skylink, skappData)]);
+      await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData.skylink, skappData)]);
       handleClose();
     } catch (error) {
       console.log(error);
@@ -48,15 +49,20 @@ export default function InstallFromSkylinkModal() {
       if (skylink) {
         setProcessing(true);
 
-        const skylinkUrl = await skynetClient.getSkylinkUrl(skylink);
-        const data = { skylink, skylinkUrl };
+        const requestedSkylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
+        const data = { requestedSkylink: skylink, requestedSkylinkUrl };
 
         try {
-          const metadata = await getSkappMetadata(skylinkUrl);
+          const metadata = await getSkappMetadata(requestedSkylinkUrl);
 
-          if (metadata.title) data.name = metadata.title;
+          if (metadata.name) data.name = metadata.name;
           if (metadata.description) data.description = metadata.description;
-          if (metadata.logo) data.icon = metadata.logo.url;
+          if (metadata.icon) data.icon = metadata.icon;
+          if (metadata.skylink) data.skylink = metadata.skylink;
+          if (metadata.skylink) {
+            data.skylinkUrl = await skynetClient.getSkylinkUrl(metadata.skylink, { subdomain: true });
+          }
+          data.manifestFound = metadata.manifestFound || false;
         } catch (error) {
           // couldn't fetch metadata
         }
@@ -114,9 +120,20 @@ export default function InstallFromSkylinkModal() {
                   {skylink && (
                     <div className="mt-4 text-sm space-y-2 text-palette-400">
                       <p>You have requested to add a skylink to your Homescreen.</p>
+
                       <p>
-                        <Link href={skappData?.skylinkUrl}>{skylink}</Link>
+                        <Link href={skappData?.requestedSkylinkUrl}>{skylink}</Link>
                       </p>
+
+                      {skappData && skylink !== skappData.skylink && (
+                        <>
+                          <p>resolves to</p>
+
+                          <p>
+                            <Link href={skappData?.skylinkUrl}>{skappData.skylink}</Link>
+                          </p>
+                        </>
+                      )}
 
                       <div className="py-4">
                         {skappData ? (
@@ -129,6 +146,11 @@ export default function InstallFromSkylinkModal() {
                         )}
                       </div>
 
+                      {skappData && !skappData.manifestFound && !processing && (
+                        <p className="text-xs text-red-500">
+                          No manifest found – app may not be ready to use with Homescreen.
+                        </p>
+                      )}
                       <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
                     </div>
                   )}
