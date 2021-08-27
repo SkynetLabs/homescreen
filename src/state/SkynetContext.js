@@ -40,7 +40,7 @@ export default function SkynetContextProvider({ children }) {
       // Request Discoverable Write permissions
       // This is in addition to Hidden Read and Write requested through initializing with the dataDomain
       await mySky.addPermissions(
-        new Permission(currentDomain, "homeapp.hns", PermCategory.Discoverable, PermType.Write)
+        new Permission(currentDomain, dataDomain, PermCategory.Discoverable, PermType.Write)
       );
 
       try {
