@@ -39,9 +39,7 @@ export default function SkynetContextProvider({ children }) {
 
       // Request Discoverable Write permissions
       // This is in addition to Hidden Read and Write requested through initializing with the dataDomain
-      await mySky.addPermissions(
-        new Permission(currentDomain, dataDomain, PermCategory.Discoverable, PermType.Write)
-      );
+      await mySky.addPermissions(new Permission(currentDomain, dataDomain, PermCategory.Discoverable, PermType.Write));
 
       try {
         const isAuthenticated = await mySky.checkLogin();
