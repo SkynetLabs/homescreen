@@ -20,13 +20,22 @@ export default function InstallFromSkylinkModal() {
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
-  const handleConfirm = async () => {
-    setProcessing(true);
+  const getResolvedSkylink = async (skylink) => {
     try {
       // todo: this should be native skynetClient.resolveSkylink call once we have it
       const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
       const { data } = await skynetClient.executeRequest({ url });
-      const { skylink: resolvedSkylink } = data;
+
+      return data.skylink;
+    } catch (error) {
+      return skylink;
+    }
+  };
+
+  const handleConfirm = async () => {
+    setProcessing(true);
+    try {
+      const resolvedSkylink = await getResolvedSkylink(skylink);
 
       await Promise.all([skynetClient.pinSkylink(resolvedSkylink), updateSkapp(skylink, skappData)]);
       handleClose();
