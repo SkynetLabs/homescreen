@@ -54,6 +54,7 @@ export default async function getSkappMetadata(url) {
           manifestLocation = link.getAttribute("href");
         }
       }
+
       if (!manifestLocation) throw new Error("No manifest declared.");
 
       // Build full path with SkylinkUrl
@@ -80,9 +81,7 @@ export default async function getSkappMetadata(url) {
     }
 
     // combine results from parsers, with Manifest taking priority
-    const data = { ...emptyManifest, ...parsedMetadata, ...parsedManifest, skylink };
-
-    return data;
+    return { ...emptyManifest, ...parsedMetadata, ...parsedManifest, skylink };
   } catch (error) {
     console.error(error);
 
