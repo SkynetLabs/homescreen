@@ -20,14 +20,24 @@ export default function InstallFromSkylinkModal() {
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
+  // commit f349fc2 wasn't using the var which was only usage of this function.
+  // const getResolvedSkylink = async (skylink) => {
+  //   try {
+  //     // todo: this should be native skynetClient.resolveSkylink call once we have it
+  //     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
+  //     const { data } = await skynetClient.executeRequest({ url });
+
+  //     return data.skylink;
+  //   } catch (error) {
+  //     return skylink;
+  //   }
+  // };
+
   const handleConfirm = async () => {
     setProcessing(true);
     try {
-      // todo: this should be native skynetClient.resolveSkylink call once we have it
-      // const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
-      // const skylink = skappData.skylink;
-      // const { data } = await skynetClient.executeRequest({ url });
-      // const { skylink: resolvedSkylink } = data;
+      // commit f349fc2 wasn't using this var.
+      // const resolvedSkylink = await getResolvedSkylink(skylink);
 
       await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData.skylink, skappData)]);
       handleClose();

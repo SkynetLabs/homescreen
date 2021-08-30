@@ -25,7 +25,7 @@ export default async function getSkappMetadata(url) {
       response = await ky.get(url);
     } catch (error) {
       console.error(error);
-      console.error("No manifest file found.");
+      console.error("Skylink could not be loaded.");
     }
 
     // Grab HTML and parse. Used to find manifest URL and metadata.

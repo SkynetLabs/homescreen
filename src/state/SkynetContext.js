@@ -1,8 +1,9 @@
 import * as React from "react";
 import skynetClient from "../services/skynetClient";
+import { Permission, PermCategory, PermType } from "skynet-js";
 
-const deploySkylink = "0405b1o5aj1g56mlodfamvjogqeksvakirqrh9fhsqkstkl670p25lo";
-const dataDomain = window.location.hostname === "localhost" ? "localhost" : deploySkylink;
+// use homeapp.hns for dataDomain
+const dataDomain = "homeapp.hns";
 
 const transformSkapps = async (skapps) => {
   return Promise.all(
@@ -30,8 +31,15 @@ export default function SkynetContextProvider({ children }) {
     const execute = async () => {
       setState((state) => ({ ...state, mySkyInitialising: true }));
 
-      // TODO: remove dev: true once we hit production
-      const mySky = await skynetClient.loadMySky(dataDomain, { dev: true });
+      // initialize MySky
+      const mySky = await skynetClient.loadMySky(dataDomain);
+
+      // Grab current domain for requesting permissions
+      const currentDomain = await skynetClient.extractDomain(window.location.href);
+
+      // Request Discoverable Write permissions
+      // This is in addition to Hidden Read and Write requested through initializing with the dataDomain
+      await mySky.addPermissions(new Permission(currentDomain, dataDomain, PermCategory.Discoverable, PermType.Write));
 
       try {
         const isAuthenticated = await mySky.checkLogin();
