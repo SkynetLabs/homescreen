@@ -1,18 +1,25 @@
-import React from "react";
+import * as React from "react";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Homescreen from "./pages/Homescreen";
-import SkynetContextProvider from "./state/SkynetContext";
+import AuthContextProvider from "./state/AuthContext";
+import StorageContextProvider from "./state/StorageContext";
 
 export default function App() {
   return (
-    <Router>
-      <SkynetContextProvider>
-        <Switch>
-          <Route path="/">
-            <Homescreen />
-          </Route>
-        </Switch>
-      </SkynetContextProvider>
-    </Router>
+    <>
+      <Router>
+        <AuthContextProvider>
+          <StorageContextProvider>
+            <Switch>
+              <Route path="/">
+                <Homescreen />
+              </Route>
+            </Switch>
+          </StorageContextProvider>
+        </AuthContextProvider>
+      </Router>
+      <ToastContainer />
+    </>
   );
 }

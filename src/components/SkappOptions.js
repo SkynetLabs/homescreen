@@ -1,21 +1,74 @@
 import * as React from "react";
+import classNames from "classnames";
+import { toast } from "react-toastify";
+import ms from "ms";
+import { useHistory } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { SkynetContext } from "../state/SkynetContext";
+import { StorageContext } from "../state/StorageContext";
+import skynetClient from "../services/skynetClient";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+const getResolvedSkylink = async (skylink) => {
+  const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
+  const { data } = await skynetClient.executeRequest({ url });
+
+  return data.skylink;
+};
 
 export default function SkappOptions({ skapp }) {
-  const { updateSkapp } = React.useContext(SkynetContext);
+  const { isStorageProcessing, updateSkapp, removeSkapp } = React.useContext(StorageContext);
+  const history = useHistory();
 
   const handleRemove = () => {
-    updateSkapp(skapp.skylink, null);
+    if (!isStorageProcessing) {
+      const removing = removeSkapp(skapp.id);
+
+      toast.promise(removing, {
+        pending: "Removing skapp...",
+        success: "Skapp removed!",
+        error: (error) => `Failed removing skapp: ${error.message}`,
+      });
+    }
   };
 
   const handleToggleFavorite = () => {
-    updateSkapp(skapp.skylink, { ...skapp, favorite: !skapp.favorite });
+    if (!isStorageProcessing) {
+      const updating = updateSkapp({ ...skapp, favorite: !skapp.favorite });
+
+      toast.promise(updating, {
+        pending: skapp.favorite ? "Removing skapp from favorites" : "Adding skapp to favorites",
+        success: skapp.favorite ? "Skapp removed from favorites" : "Skapp added to favorites",
+        error: (error) => `Toggling favorites failed: ${error.message}`,
+      });
+    }
+  };
+
+  const handleCheckForUpdates = async () => {
+    const toastId = toast.loading("Checking for updates...");
+
+    try {
+      const resolvedSkylink = await getResolvedSkylink(skapp.resolverSkylink);
+
+      if (resolvedSkylink !== skapp.skylink) {
+        history.push(`/skylink/${skapp.resolverSkylink}`);
+
+        toast.dismiss(toastId);
+      } else {
+        toast.update(toastId, {
+          render: "You have the latest version!",
+          type: toast.TYPE.SUCCESS,
+          isLoading: false,
+          autoClose: ms("3s"),
+        });
+      }
+    } catch (error) {
+      toast.update(toastId, {
+        render: `Failed checking for updates: ${error.message}`,
+        type: toast.TYPE.ERROR,
+        isLoading: false,
+        autoClose: ms("10s"),
+      });
+    }
   };
 
   return (
@@ -44,30 +97,50 @@ export default function SkappOptions({ skapp }) {
               className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
               <div className="py-1">
-                <Menu.Item>
-                  {({ active }) => (
+                <Menu.Item disabled={isStorageProcessing}>
+                  {({ active, disabled }) => (
                     <button
                       type="button"
                       onClick={handleToggleFavorite}
-                      className={classNames(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                        "block px-4 py-2 text-sm w-full text-left"
-                      )}
+                      className={classNames("block px-4 py-2 text-sm w-full text-left", {
+                        "bg-palette-100": active,
+                        "text-palette-300": disabled,
+                        "text-palette-600": !disabled,
+                      })}
                     >
                       {skapp.favorite ? "Remove from favorites" : "Add to favorites"}
                     </button>
                   )}
                 </Menu.Item>
 
-                <Menu.Item>
-                  {({ active }) => (
+                {skapp.resolverSkylink && (
+                  <Menu.Item>
+                    {({ active, disabled }) => (
+                      <button
+                        type="button"
+                        onClick={handleCheckForUpdates}
+                        className={classNames("block px-4 py-2 text-sm w-full text-left", {
+                          "bg-palette-100": active,
+                          "text-palette-300": disabled,
+                          "text-palette-600": !disabled,
+                        })}
+                      >
+                        Check for updates
+                      </button>
+                    )}
+                  </Menu.Item>
+                )}
+
+                <Menu.Item disabled={isStorageProcessing}>
+                  {({ active, disabled }) => (
                     <button
                       type="button"
                       onClick={handleRemove}
-                      className={classNames(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                        "block px-4 py-2 text-sm w-full text-left"
-                      )}
+                      className={classNames("block px-4 py-2 text-sm w-full text-left", {
+                        "bg-palette-100": active,
+                        "text-palette-300": disabled,
+                        "text-palette-600": !disabled,
+                      })}
                     >
                       Remove
                     </button>

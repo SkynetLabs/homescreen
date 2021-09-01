@@ -1,12 +1,13 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { isSkylinkV2, parseSkylink } from "skynet-js";
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
 import Link from "./Link";
 import skynetClient from "../services/skynetClient";
 import SkappCard from "./SkappCard";
 import getSkappMetadata from "../services/getSkappMetadata";
-import { SkynetContext } from "../state/SkynetContext";
+import { StorageContext } from "../state/StorageContext";
 import { ReactComponent as Cog } from "../svg/Cog.svg";
 
 export default function InstallFromSkylinkModal() {
@@ -14,36 +15,30 @@ export default function InstallFromSkylinkModal() {
   const history = useHistory();
   const [skappData, setSkappData] = useState(null);
   const [open, setOpen] = useState(true);
-  const { updateSkapp } = React.useContext(SkynetContext);
+  const { isStorageProcessing, updateSkapp } = React.useContext(StorageContext);
   const [processing, setProcessing] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
-  // commit f349fc2 wasn't using the var which was only usage of this function.
-  // const getResolvedSkylink = async (skylink) => {
-  //   try {
-  //     // todo: this should be native skynetClient.resolveSkylink call once we have it
-  //     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
-  //     const { data } = await skynetClient.executeRequest({ url });
+  const getResolvedSkylink = async (skylink) => {
+    const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
+    const { data } = await skynetClient.executeRequest({ url });
 
-  //     return data.skylink;
-  //   } catch (error) {
-  //     return skylink;
-  //   }
-  // };
+    return data.skylink;
+  };
 
   const handleConfirm = async () => {
     setProcessing(true);
-    try {
-      // commit f349fc2 wasn't using this var.
-      // const resolvedSkylink = await getResolvedSkylink(skylink);
 
-      await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData.skylink, skappData)]);
+    try {
+      await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData)]);
       handleClose();
     } catch (error) {
       console.log(error);
     }
+
     setProcessing(false);
   };
 
@@ -57,24 +52,32 @@ export default function InstallFromSkylinkModal() {
   React.useEffect(() => {
     (async () => {
       if (skylink) {
+        const validSkylink = parseSkylink(skylink);
+
+        if (!validSkylink) {
+          return setError("Your skylink is invalid!");
+        }
+
         setProcessing(true);
 
-        const requestedSkylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
-        const data = { requestedSkylink: skylink, requestedSkylinkUrl };
+        const data = { skylink, metadata: {} };
+
+        if (isSkylinkV2(validSkylink)) {
+          data.resolverSkylink = validSkylink;
+          data.skylink = await getResolvedSkylink(validSkylink);
+        }
 
         try {
-          const metadata = await getSkappMetadata(requestedSkylinkUrl);
+          const metadata = await getSkappMetadata(data.skylink);
 
-          if (metadata.name) data.name = metadata.name;
-          if (metadata.description) data.description = metadata.description;
-          if (metadata.icon) data.icon = metadata.icon;
-          if (metadata.skylink) data.skylink = metadata.skylink;
-          if (metadata.skylink) {
-            data.skylinkUrl = await skynetClient.getSkylinkUrl(metadata.skylink, { subdomain: true });
-          }
-          data.manifestFound = metadata.manifestFound || false;
+          if (metadata.name) data.metadata.name = metadata.name;
+          if (metadata.description) data.metadata.description = metadata.description;
+          if (metadata.icon) data.metadata.icon = metadata.icon;
+
+          // if resolved skylink is included in metadata then use it
+          if (metadata.skylink && isSkylinkV2(metadata.skylink)) data.resolverSkylink = metadata.skylink;
         } catch (error) {
-          // couldn't fetch metadata
+          // couldn't fetch metadata - ignore it
         }
 
         setProcessing(false);
@@ -145,43 +148,53 @@ export default function InstallFromSkylinkModal() {
                         </>
                       )}
 
-                      <div className="py-4">
-                        {skappData ? (
+                      {skappData && (
+                        <div className="py-4">
                           <SkappCard skapp={skappData} actions={false} />
-                        ) : (
+                        </div>
+                      )}
+
+                      {processing && (
+                        <div className="py-4">
                           <span className="flex items-center justify-center">
                             <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
                             skapp metadata, please wait
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
-                      {skappData && !skappData.manifestFound && !processing && (
+                      {skappData && !skappData.metadata.name && !processing && (
                         <p className="text-xs text-red-500">
-                          No manifest found – app may not be ready to use with Homescreen.
+                          Either we couldn't find skapp metadata in the manifest or the skapp manifest was not found.
                         </p>
                       )}
-                      <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
+                      {error ? (
+                        <p className="text-error">{error}</p>
+                      ) : (
+                        <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
+
               <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                 <button
                   type="button"
                   className={classNames(
                     "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2  text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
                     {
-                      "bg-primary hover:bg-primary-light": !processing,
-                      "border border-palette-300 bg-palette-100 cursor-auto": processing,
+                      "bg-primary hover:bg-primary-light": !(processing || error),
+                      "border border-palette-300 bg-palette-100 cursor-auto": processing || error,
                     }
                   )}
                   onClick={handleConfirm}
-                  disabled={processing}
+                  disabled={processing || error || isStorageProcessing}
                   ref={acceptButtonRef}
                 >
                   {processing ? "Please wait" : "Add to Homescreen"}
                 </button>
+
                 <button
                   type="button"
                   className="hover:bg-palette-100 mt-3 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:col-start-1 sm:text-sm"

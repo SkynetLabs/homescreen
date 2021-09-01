@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import { parseSkylink } from "skynet-js";
+import { toast } from "react-toastify";
 
 export default function InstallFromSkylink() {
   const [skylink, setSkylink] = React.useState("");
@@ -13,11 +14,15 @@ export default function InstallFromSkylink() {
       try {
         const parsed = parseSkylink(skylink);
 
-        history.push(`/skylink/${parsed}`);
+        if (parsed) {
+          history.push(`/skylink/${parsed}`);
 
-        setSkylink("");
+          setSkylink("");
+        } else {
+          toast.error("Invalid skylink!");
+        }
       } catch (error) {
-        console.log(error); // invalid skylink
+        toast.error(error.message);
       }
     }
   };

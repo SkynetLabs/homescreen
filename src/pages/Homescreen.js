@@ -1,21 +1,26 @@
-/* This example requires Tailwind CSS v2.0+ */
 import * as React from "react";
 import { Disclosure } from "@headlessui/react";
 import { Route, Switch } from "react-router-dom";
-import { SkynetContext } from "../state/SkynetContext";
+import { AuthContext } from "../state/AuthContext";
+import { StorageContext } from "../state/StorageContext";
 import SkappGrid from "../components/SkappGrid";
 import MySkyButton from "../components/MySkyButton";
-// import Search from "../components/Search";
+import Spinner from "../components/Spinner";
 import Link from "../components/Link";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
-// import InstallFromGithubModal from "../components/InstallModal";
 
 export default function Homescreen() {
-  const { user, skapps } = React.useContext(SkynetContext);
+  const { mySkyInitialising, user } = React.useContext(AuthContext);
+  const { isStorageInitialised, skapps } = React.useContext(StorageContext);
 
-  const favorites = skapps.filter(({ favorite }) => favorite);
-  const others = skapps.filter(({ favorite }) => !favorite);
+  const showMySkyAuthSection = !mySkyInitialising && !user;
+  const showInitialisingSpinner = mySkyInitialising || (user && !isStorageInitialised);
+  const showEmptySkappsSection = isStorageInitialised && skapps.length === 0;
+  const showSkappsSection = isStorageInitialised && skapps.length > 0;
+
+  const favorites = skapps?.filter(({ favorite }) => favorite);
+  const others = skapps?.filter(({ favorite }) => !favorite);
 
   return (
     <div className="min-h-screen bg-white">
@@ -32,7 +37,6 @@ export default function Homescreen() {
                 </div>
                 {user && (
                   <div className="flex items-center space-x-4">
-                    {/* <Search /> */}
                     <InstallFromSkylink />
                     <MySkyButton />
                   </div>
@@ -63,33 +67,43 @@ export default function Homescreen() {
         </header>
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {user ? (
+            {showSkappsSection && (
               <div className="px-4 py-8 sm:px-0 space-y-12">
                 {/* <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" /> */}
-                {Boolean(favorites.length) && <SkappGrid title="Favorite Skapps" skapps={favorites} />}
-                {Boolean(others.length) && <SkappGrid title="All Skapps" skapps={others} />}
-                {!skapps.length && (
-                  <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-                    <h2 className="text-xl font-semibold sm:text-2xl space-y-2">
-                      <span className="block">Welcome stranger!</span>
-                      <span className="block text-primary">
-                        This is your personal Skynet <span className="underline">Homescreen</span>.
-                      </span>
-                    </h2>
-                    <p className="mt-4 text-md">
-                      Start using your workspace by pasting one of your favorite skylinks in the box in header.
-                    </p>
-                    <p className="mt-4 text-md">
-                      <span className="underline">In case you're new to Skynet</span> please make sure to read the
-                      introduction materials listed in the top right corner.
-                    </p>
-                  </div>
-                )}
+                {favorites && Boolean(favorites.length) && <SkappGrid title="Favorite Skapps" skapps={favorites} />}
+                {others && Boolean(others.length) && <SkappGrid title="All Skapps" skapps={others} />}
               </div>
-            ) : (
+            )}
+
+            {showEmptySkappsSection && (
+              <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+                <h2 className="text-xl font-semibold sm:text-2xl space-y-2">
+                  <span className="block">Welcome stranger!</span>
+                  <span className="block text-primary">
+                    This is your personal Skynet <span className="underline">Homescreen</span>.
+                  </span>
+                </h2>
+                <p className="mt-4 text-md">
+                  Start using your workspace by pasting one of your favorite skylinks in the box in header.
+                </p>
+                <p className="mt-4 text-md">
+                  <span className="underline">In case you're new to Skynet</span> please make sure to read the
+                  introduction materials listed in the top right corner.
+                </p>
+              </div>
+            )}
+
+            {showMySkyAuthSection && (
               <div className="px-4 py-32 sm:px-0 space-y-6 text-center">
                 <p className="text-palette-500">Please authenticate with MySky to continue</p>
                 <MySkyButton />
+              </div>
+            )}
+
+            {showInitialisingSpinner && (
+              <div className="px-4 py-32 sm:px-0 space-y-6 text-center">
+                <Spinner />
+                <p className="text-palette-500">Initialising Your Homescreen</p>
               </div>
             )}
           </div>

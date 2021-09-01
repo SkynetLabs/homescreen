@@ -1,6 +1,7 @@
 import ky from "ky";
 import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
+import skynetClient from "../services/skynetClient";
 
 const emptyManifest = {
   name: "Not Found",
@@ -10,19 +11,20 @@ const emptyManifest = {
   manifestFound: false,
 };
 
-export default async function getSkappMetadata(url) {
+export default async function getSkappMetadata(skylink) {
   try {
+    const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
+
     // setup vars
     let parsedManifest = {};
     let parsedMetadata = {};
-
-    let skylink;
     let response;
 
     try {
       // Get HTML of skylink
       // TODO: replace with client.getFileContent() for registry verification on resolver skylinks
-      response = await ky.get(url);
+
+      response = await ky.get(skylinkUrl);
     } catch (error) {
       console.error(error);
       console.error("Skylink could not be loaded.");
@@ -32,14 +34,6 @@ export default async function getSkappMetadata(url) {
     const responseText = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(responseText, "text/html");
-
-    // grab immutable skylink
-    // TODO: Grab this from the client.getFileContent() above.
-    for (var key of response.headers.keys()) {
-      if (key === "skynet-skylink") {
-        skylink = response.headers.get(key);
-      }
-    }
 
     // Check HTML for reference to manifest file
     try {
@@ -58,7 +52,7 @@ export default async function getSkappMetadata(url) {
       if (!manifestLocation) throw new Error("No manifest declared.");
 
       // Build full path with SkylinkUrl
-      const manifestUrl = new URL(manifestLocation, url);
+      const manifestUrl = new URL(manifestLocation, skylinkUrl);
 
       // Get Manifest file
       // May replace by getting with SkynetClient.getFileContent() if it validates resolver proof.
@@ -77,7 +71,7 @@ export default async function getSkappMetadata(url) {
     // if missing or incomplete manifest...
     if (!parsedManifest.manifestFound) {
       // parse metadata using body text and parsed html.
-      parsedMetadata = await parseMetadata(responseText, doc, url);
+      parsedMetadata = await parseMetadata(responseText, doc, skylink);
     }
 
     // combine results from parsers, with Manifest taking priority
