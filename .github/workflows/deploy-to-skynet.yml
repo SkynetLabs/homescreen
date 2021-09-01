@@ -1,6 +1,7 @@
 name: Deploy to Skynet
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -21,7 +22,7 @@ jobs:
           REACT_APP_GIT_SHA: ${{ github.sha }}
 
       - name: Deploy to Skynet
-        uses: skynetlabs/deploy-to-skynet-action@main
+        uses: skynetlabs/deploy-to-skynet-action@v2
         with:
           upload-dir: build
           github-token: ${{ secrets.GITHUB_TOKEN }}
