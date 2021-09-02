@@ -53,40 +53,28 @@ export default async function getSkappMetadata(skylink) {
     const doc = parser.parseFromString(responseText, "text/html");
 
     // Find Link tags
-    const links = doc.getElementsByTagName("link");
-    const xxx = Array.from(links).find((link) => link.getAttribute("rel") === "manifest");
-    console.log(xxx);
+    const manifestTag = Array.from(doc.getElementsByTagName("link")).find(
+      (link) => link.getAttribute("rel") === "manifest"
+    );
 
-    // find <link rel="manifest" />
-    let manifestLocation = "";
-    for (let link of links) {
-      let rel = link.getAttribute("rel");
-      if (rel === "manifest") {
-        manifestLocation = link.getAttribute("href");
-      }
-    }
+    if (!manifestTag) throw new Error("No manifest declared.");
 
-    if (!manifestLocation) throw new Error("No manifest declared.");
-
-    // Build full path with SkylinkUrl
-    const manifestUrl = new URL(manifestLocation, skylinkUrl);
-
-    // Get Manifest file
-    // May replace by getting with SkynetClient.getFileContent() if it validates resolver proof.
-    const manifest = await ky.get(manifestUrl.href).json();
+    const manifestPath = manifestTag.getAttribute("href");
+    const { data: manifest } = await skynetClient.getFileContent(skylink, { subdomain: true, path: manifestPath });
 
     // Get directory of manifest file for parseManifest since references are relative.
-    const manifestDir = manifestUrl.href.substring(0, manifestUrl.href.lastIndexOf("/")) + "/";
+    const manifestUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true, path: manifestPath });
+    const manifestUrlBase = manifestUrl.replace(/\/[^/]+$/, "/");
 
     // parse the manifset file, grabbing best key-values
-    const parsedManifest = parseManifest(manifest, manifestDir);
+    const parsedManifest = parseManifest(manifest, manifestUrlBase);
 
     let parsedMetadata = {};
 
     // if missing or incomplete manifest...
     if (!parsedManifest.manifestFound) {
       // parse metadata using body text and parsed html.
-      parsedMetadata = await parseMetadata(responseText, doc, skylink);
+      parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
     }
 
     // combine results from parsers, with Manifest taking priority
