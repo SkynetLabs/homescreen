@@ -19,7 +19,7 @@ export default function App() {
           </StorageContextProvider>
         </AuthContextProvider>
       </Router>
-      <ToastContainer />
+      <ToastContainer bodyClassName={() => "Toastify__toast-body text-sm font-medium text-palette-500"} />
     </>
   );
 }
