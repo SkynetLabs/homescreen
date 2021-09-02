@@ -13,11 +13,11 @@ export const SkappSchema = yup.object({
     .date()
     .required()
     .default(() => new Date()),
-  updateHistory: yup
+  skylinkHistory: yup
     .array(
       yup.object({
-        updatedOn: yup.date().default(() => new Date()),
-        updatedSkylink: yup.string().required(),
+        until: yup.date().default(() => new Date()),
+        skylink: yup.string().required(),
       })
     )
     .ensure(),

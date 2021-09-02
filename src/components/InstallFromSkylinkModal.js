@@ -15,12 +15,17 @@ export default function InstallFromSkylinkModal() {
   const history = useHistory();
   const [skappData, setSkappData] = useState(null);
   const [open, setOpen] = useState(true);
-  const { isStorageProcessing, updateSkapp } = React.useContext(StorageContext);
+  const { isStorageProcessing, updateSkapp, skapps } = React.useContext(StorageContext);
   const [processing, setProcessing] = React.useState(false);
   const [error, setError] = React.useState("");
 
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
+
+  const existingSkapp = skapps.find(
+    ({ resolverSkylink }) => resolverSkylink && resolverSkylink === skappData?.resolverSkylink
+  );
+  const existingSkappDuplicate = existingSkapp && existingSkapp.skylink === skappData.skylink;
 
   const getResolvedSkylink = async (skylink) => {
     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
@@ -128,49 +133,62 @@ export default function InstallFromSkylinkModal() {
               <div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium">
-                    Adding new application
+                    Adding new Skylink
                   </Dialog.Title>
                   {skylink && (
                     <div className="mt-4 text-sm space-y-2 text-palette-400">
-                      <p>You have requested to add a skylink to your Homescreen.</p>
-
-                      <p>
-                        <Link href={skappData?.requestedSkylinkUrl}>{skylink}</Link>
-                      </p>
+                      <p>You have requested to add this skylink to your Homescreen</p>
 
                       {skappData && skylink !== skappData.skylink && (
                         <>
-                          <p>resolves to</p>
+                          <p className="font-bold font-mono text-palette-600 bg-blue-50 p-2">{skylink}</p>
 
                           <p>
-                            <Link href={skappData?.skylinkUrl}>{skappData.skylink}</Link>
+                            which is a{" "}
+                            <Link href="https://docs.siasky.net/skynet-topics/resolver-skylinks">resolver skylink</Link>{" "}
+                            that points to
                           </p>
                         </>
                       )}
 
                       {skappData && (
-                        <div className="py-4">
-                          <SkappCard skapp={skappData} actions={false} />
-                        </div>
+                        <p className="font-bold font-mono text-palette-600 bg-blue-100 p-2">{skappData.skylink}</p>
                       )}
 
-                      {processing && (
-                        <div className="py-4">
+                      <div className="py-4">
+                        {skappData ? (
+                          <SkappCard skapp={skappData} actions={false} />
+                        ) : (
                           <span className="flex items-center justify-center">
                             <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
                             skapp metadata, please wait
                           </span>
-                        </div>
-                      )}
+                        )}
+                      </div>
 
                       {skappData && !skappData.metadata.name && !processing && (
-                        <p className="text-xs text-red-500">
+                        <p className="text-xs text-error">
                           Either we couldn't find skapp metadata in the manifest or the skapp manifest was not found.
                         </p>
                       )}
-                      {error ? (
-                        <p className="text-error">{error}</p>
-                      ) : (
+
+                      {error && <p className="text-error">{error}</p>}
+
+                      {existingSkappDuplicate && (
+                        <p>
+                          This skapp is already on your Homescreen, there is no need to add it again. You can close this
+                          window.
+                        </p>
+                      )}
+
+                      {existingSkapp && !existingSkappDuplicate && (
+                        <p>
+                          This skapp is already on your Homescreen but it resolves to a different skylink. Would you
+                          like to update it to this specific skylink?
+                        </p>
+                      )}
+
+                      {!existingSkappDuplicate && (
                         <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
                       )}
                     </div>
@@ -178,31 +196,34 @@ export default function InstallFromSkylinkModal() {
                 </div>
               </div>
 
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+              <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
                 <button
                   type="button"
-                  className={classNames(
-                    "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2  text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
-                    {
-                      "bg-primary hover:bg-primary-light": !(processing || error),
-                      "border border-palette-300 bg-palette-100 cursor-auto": processing || error,
-                    }
-                  )}
-                  onClick={handleConfirm}
-                  disabled={processing || error || isStorageProcessing}
-                  ref={acceptButtonRef}
-                >
-                  {processing ? "Please wait" : "Add to Homescreen"}
-                </button>
-
-                <button
-                  type="button"
-                  className="hover:bg-palette-100 mt-3 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:col-start-1 sm:text-sm"
+                  className="hover:bg-palette-100 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:text-sm"
                   onClick={handleClose}
                   ref={closeButtonRef}
                 >
                   Close
                 </button>
+
+                {skappData && !existingSkappDuplicate && (
+                  <button
+                    type="button"
+                    className={classNames(
+                      "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
+                      {
+                        "bg-primary hover:bg-primary-light": !(processing || error || existingSkappDuplicate),
+                        "border border-palette-300 bg-palette-100 cursor-auto":
+                          processing || error || existingSkappDuplicate,
+                      }
+                    )}
+                    onClick={handleConfirm}
+                    disabled={processing || error || isStorageProcessing || existingSkappDuplicate}
+                    ref={acceptButtonRef}
+                  >
+                    {processing ? "Please wait" : "Add to Homescreen"}
+                  </button>
+                )}
               </div>
             </div>
           </Transition.Child>

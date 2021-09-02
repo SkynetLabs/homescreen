@@ -22,6 +22,7 @@
     "normalize.css": "^8.0.1",
     "open-graph-scraper-lite": "^1.1.1",
     "page-metadata-parser": "^1.1.4",
+    "pretty-bytes": "^5.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.1.1",

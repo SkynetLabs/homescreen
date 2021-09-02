@@ -2,6 +2,7 @@ import ky from "ky";
 import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
 import skynetClient from "../services/skynetClient";
+import prettyBytes from "pretty-bytes";
 
 const emptyManifest = {
   name: "Not Found",
@@ -11,62 +12,76 @@ const emptyManifest = {
   manifestFound: false,
 };
 
+async function getSkynetMetadata(skylink) {
+  try {
+    const response = await skynetClient.getMetadata(skylink);
+    const { filename, length, subfiles } = response.metadata;
+    const metadata = { name: filename, description: prettyBytes(length) };
+
+    if (subfiles && filename in subfiles) {
+      const { contenttype } = subfiles[filename];
+
+      metadata.description = `${contenttype} - ${metadata.description}`;
+    }
+
+    return metadata;
+  } catch (error) {
+    console.error(error);
+
+    return {};
+  }
+}
+
 export default async function getSkappMetadata(skylink) {
+  const skynetMetadata = await getSkynetMetadata(skylink);
+
   try {
     const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
+    const response = await ky.get(skylinkUrl);
+    const contentType = response.headers.get("content-type");
 
-    // setup vars
-    let parsedManifest = {};
-    let parsedMetadata = {};
-    let response;
-
-    try {
-      // Get HTML of skylink
-      // TODO: replace with client.getFileContent() for registry verification on resolver skylinks
-
-      response = await ky.get(skylinkUrl);
-    } catch (error) {
-      console.error(error);
-      console.error("Skylink could not be loaded.");
+    if (contentType !== "text/html") {
+      return { ...emptyManifest, ...skynetMetadata };
     }
+
+    // Get HTML of skylink
+    // TODO: replace with client.getFileContent() for registry verification on resolver skylinks
 
     // Grab HTML and parse. Used to find manifest URL and metadata.
     const responseText = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(responseText, "text/html");
 
-    // Check HTML for reference to manifest file
-    try {
-      // Find Link tags
-      const links = doc.getElementsByTagName("link");
+    // Find Link tags
+    const links = doc.getElementsByTagName("link");
+    const xxx = Array.from(links).find((link) => link.getAttribute("rel") === "manifest");
+    console.log(xxx);
 
-      // find <link rel="manifest" />
-      let manifestLocation = "";
-      for (let link of links) {
-        let rel = link.getAttribute("rel");
-        if (rel === "manifest") {
-          manifestLocation = link.getAttribute("href");
-        }
+    // find <link rel="manifest" />
+    let manifestLocation = "";
+    for (let link of links) {
+      let rel = link.getAttribute("rel");
+      if (rel === "manifest") {
+        manifestLocation = link.getAttribute("href");
       }
-
-      if (!manifestLocation) throw new Error("No manifest declared.");
-
-      // Build full path with SkylinkUrl
-      const manifestUrl = new URL(manifestLocation, skylinkUrl);
-
-      // Get Manifest file
-      // May replace by getting with SkynetClient.getFileContent() if it validates resolver proof.
-      const manifest = await ky.get(manifestUrl.href).json();
-
-      // Get directory of manifest file for parseManifest since references are relative.
-      const manifestDir = manifestUrl.href.substring(0, manifestUrl.href.lastIndexOf("/")) + "/";
-
-      // parse the manifset file, grabbing best key-values
-      parsedManifest = parseManifest(manifest, manifestDir);
-    } catch (error) {
-      console.error(error);
-      console.error("No manifest file found.");
     }
+
+    if (!manifestLocation) throw new Error("No manifest declared.");
+
+    // Build full path with SkylinkUrl
+    const manifestUrl = new URL(manifestLocation, skylinkUrl);
+
+    // Get Manifest file
+    // May replace by getting with SkynetClient.getFileContent() if it validates resolver proof.
+    const manifest = await ky.get(manifestUrl.href).json();
+
+    // Get directory of manifest file for parseManifest since references are relative.
+    const manifestDir = manifestUrl.href.substring(0, manifestUrl.href.lastIndexOf("/")) + "/";
+
+    // parse the manifset file, grabbing best key-values
+    const parsedManifest = parseManifest(manifest, manifestDir);
+
+    let parsedMetadata = {};
 
     // if missing or incomplete manifest...
     if (!parsedManifest.manifestFound) {
@@ -75,11 +90,11 @@ export default async function getSkappMetadata(skylink) {
     }
 
     // combine results from parsers, with Manifest taking priority
-    return { ...emptyManifest, ...parsedMetadata, ...parsedManifest, skylink };
+    return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, ...parsedManifest, skylink };
   } catch (error) {
     console.error(error);
 
-    return emptyManifest;
+    return { ...emptyManifest, ...skynetMetadata };
   }
 }
 
@@ -116,7 +131,6 @@ async function parseMetadata(html, doc, url) {
 
   // const doc = new Document(html);
   const md = getMetadata(doc, url);
-
   const ogImage = og.ogImage ? new URL(og.ogImage.url, url) : undefined;
 
   // Haven't found usecase to test.

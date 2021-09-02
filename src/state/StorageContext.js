@@ -86,6 +86,10 @@ export default function StorageContextProvider({ children }) {
       if (index === -1) {
         await persistSkapps([...skapps, skapp]);
       } else {
+        if (skapp.skylink !== skapps[index].skylink) {
+          skapp.skylinkHistory = [...skapp.skylinkHistory, { skylink: skapps[index].skylink }];
+        }
+
         await persistSkapps([...skapps.slice(0, index), skapp, ...skapps.slice(index + 1)]);
       }
 
