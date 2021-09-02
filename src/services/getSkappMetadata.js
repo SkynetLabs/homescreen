@@ -8,7 +8,7 @@ const emptyManifest = {
   name: "Not Found",
   icon: null,
   description: "No description found.",
-  theme_color: "#000000",
+  themeColor: "#000000",
   manifestFound: false,
 };
 
@@ -91,14 +91,14 @@ function parseManifest(manifest, url) {
   // Choose a definitive set of properties used in frontend
   const chosenName = manifest.short_name || manifest.name || undefined;
   const description = manifest.description || undefined;
-  const theme_color = manifest.theme_color || undefined;
+  const themeColor = manifest.theme_color || undefined;
   const icon = manifest.icons[0].src || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(url + icon) : undefined;
 
   // if not all found, manifest is incomplete, flag as "false"
-  const manifestFound = chosenName && description && theme_color && icon && iconUrl ? true : false;
+  const manifestFound = chosenName && description && themeColor && icon && iconUrl ? true : false;
 
-  const parsed = { name: chosenName, icon: iconUrl, description, theme_color, manifestFound };
+  const parsed = { name: chosenName, icon: iconUrl, description, themeColor, manifestFound };
 
   // return parsed after removing undefined keys.
   return JSON.parse(JSON.stringify(parsed));
@@ -128,9 +128,9 @@ async function parseMetadata(html, doc, url) {
   const name = og.ogTitle || md.title || undefined;
   const icon = ogImage || md.icon || md.image || undefined;
   const description = og.ogDescription || md.description || undefined;
-  const theme_color = og.themeColor || undefined;
+  const themeColor = og.themeColor || undefined;
 
-  const parsed = { name, icon, description, theme_color };
+  const parsed = { name, icon, description, themeColor };
 
   // return parsed after removing undefined keys.
   return JSON.parse(JSON.stringify(parsed));

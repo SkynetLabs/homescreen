@@ -24,15 +24,16 @@ export default function SkappCard({ skapp, actions = true }) {
   }, [skapp.skylink]);
 
   return (
-    <div key={skapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-gray-200">
-      <div
-        className="flex-shrink-0 flex items-center justify-center w-16 p-2 text-white text-sm font-medium overflow-hidden"
-        style={{ backgroundColor: skapp.metadata.icon ? null : skapp.bgColor ?? "#242424" }}
+    <div key={skapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-palette-200">
+      <Link
+        href={skylinkUrl}
+        className="flex-shrink-0 flex items-center justify-center w-16 h-16 m-2 text-white text-sm font-medium overflow-hidden rounded-md"
+        style={{ backgroundColor: skapp.metadata.icon ? null : skapp.metadata.themeColor ?? "#242424" }}
       >
         {skapp.metadata.icon ? <img src={skapp.metadata.icon} alt={skappInitials(skapp)} /> : skappInitials(skapp)}
-      </div>
+      </Link>
 
-      <div className="flex-1 flex items-center justify-between bg-white truncate">
+      <div className="flex-1 flex items-center justify-between truncate">
         <div className="flex-1 px-4 py-2 text-sm truncate space-y-1 text-left">
           <Link href={skylinkUrl} className="font-semibold text-palette-600 hover:text-primary transition-colors">
             {skapp.metadata.name ?? skapp.skylink}

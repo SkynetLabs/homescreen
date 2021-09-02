@@ -25,26 +25,22 @@ export default function Homescreen() {
   return (
     <div className="min-h-screen bg-white">
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
-        {({ open }) => (
-          <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
-                <div className="flex">
-                  <div className="flex-shrink-0 flex items-center">
-                    <img className="block lg:hidden h-8 w-auto" src="/logo/skynet.svg" alt="Workflow" />
-                    <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
-                  </div>
-                </div>
-                {user && (
-                  <div className="flex items-center space-x-4">
-                    <InstallFromSkylink />
-                    <MySkyButton />
-                  </div>
-                )}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <div className="flex-shrink-0 flex items-center">
+                <img className="block lg:hidden h-8 w-auto" src="/logo/skynet.svg" alt="Workflow" />
+                <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
               </div>
             </div>
-          </>
-        )}
+            {user && (
+              <div className="flex items-center space-x-4">
+                <InstallFromSkylink />
+                <MySkyButton />
+              </div>
+            )}
+          </div>
+        </div>
       </Disclosure>
 
       <div className="py-10">
@@ -56,10 +52,16 @@ export default function Homescreen() {
               <Link href="#" className="text-xs text-palette-400 hover:text-primary transition-colors">
                 What is Homescreen
               </Link>
-              <Link href="#" className="text-xs text-palette-400 hover:text-primary transition-colors">
+              <Link
+                href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app "
+                className="text-xs text-palette-400 hover:text-primary transition-colors"
+              >
                 How to add new skapps
               </Link>
-              <Link href="#" className="text-xs text-palette-400 hover:text-primary transition-colors">
+              <Link
+                href="https://docs.siasky.net/integrations/homescreen"
+                className="text-xs text-palette-400 hover:text-primary transition-colors"
+              >
                 Documentation and FAQ
               </Link>
             </div>

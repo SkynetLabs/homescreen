@@ -1,9 +1,10 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { isSkylinkV2, parseSkylink } from "skynet-js";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Disclosure } from "@headlessui/react";
+import { toast } from "react-toastify";
+import ms from "ms";
 import classNames from "classnames";
-import Link from "./Link";
 import skynetClient from "../services/skynetClient";
 import SkappCard from "./SkappCard";
 import getSkappMetadata from "../services/getSkappMetadata";
@@ -37,11 +38,21 @@ export default function InstallFromSkylinkModal() {
   const handleConfirm = async () => {
     setProcessing(true);
 
+    const toastId = toast.loading("Pinning your skapp");
+
     try {
-      await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData)]);
+      await skynetClient.pinSkylink(skappData.skylink);
+      toast.update(toastId, { render: "Adding skapp to your Homescreen" });
+      await updateSkapp(skappData);
+      toast.update(toastId, { render: "All done!", type: toast.TYPE.SUCCESS, isLoading: false, autoClose: ms("5s") });
       handleClose();
     } catch (error) {
-      console.log(error);
+      toast.update(toastId, {
+        render: error.message,
+        type: toast.TYPE.FAILURE,
+        isLoading: false,
+        autoClose: ms("10s"),
+      });
     }
 
     setProcessing(false);
@@ -65,7 +76,7 @@ export default function InstallFromSkylinkModal() {
 
         setProcessing(true);
 
-        const data = { skylink, metadata: {} };
+        const data = { skylink };
 
         if (isSkylinkV2(validSkylink)) {
           data.resolverSkylink = validSkylink;
@@ -75,8 +86,10 @@ export default function InstallFromSkylinkModal() {
         try {
           const metadata = await getSkappMetadata(data.skylink);
 
+          data.metadata = {};
           if (metadata.name) data.metadata.name = metadata.name;
           if (metadata.description) data.metadata.description = metadata.description;
+          if (metadata.themeColor) data.metadata.themeColor = metadata.themeColor;
           if (metadata.icon) data.metadata.icon = metadata.icon;
 
           // if resolved skylink is included in metadata then use it
@@ -136,35 +149,44 @@ export default function InstallFromSkylinkModal() {
                     Adding new Skylink
                   </Dialog.Title>
                   {skylink && (
-                    <div className="mt-4 text-sm space-y-2 text-palette-400">
-                      <p>You have requested to add this skylink to your Homescreen</p>
-
-                      {skappData && skylink !== skappData.skylink && (
-                        <>
-                          <p className="font-bold font-mono text-palette-600 bg-blue-50 p-2">{skylink}</p>
-
-                          <p>
-                            which is a{" "}
-                            <Link href="https://docs.siasky.net/skynet-topics/resolver-skylinks">resolver skylink</Link>{" "}
-                            that points to
-                          </p>
-                        </>
+                    <div className="mt-4 text-sm space-y-4 text-palette-400">
+                      {skappData ? (
+                        <SkappCard skapp={skappData} actions={false} />
+                      ) : (
+                        <span className="flex items-center justify-center">
+                          <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
+                          skapp metadata, please wait
+                        </span>
                       )}
 
-                      {skappData && (
-                        <p className="font-bold font-mono text-palette-600 bg-blue-100 p-2">{skappData.skylink}</p>
-                      )}
-
-                      <div className="py-4">
-                        {skappData ? (
-                          <SkappCard skapp={skappData} actions={false} />
-                        ) : (
-                          <span className="flex items-center justify-center">
-                            <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
-                            skapp metadata, please wait
-                          </span>
+                      <Disclosure>
+                        {({ open }) => (
+                          <>
+                            {!open && (
+                              <Disclosure.Button className="text-xs text-underline">
+                                show extended skylink details
+                              </Disclosure.Button>
+                            )}
+                            <Transition
+                              show={open}
+                              enter="transition duration-100 ease-out"
+                              enterFrom="transform scale-95 opacity-0"
+                              enterTo="transform scale-100 opacity-100"
+                              leave="transition duration-75 ease-out"
+                              leaveFrom="transform scale-100 opacity-100"
+                              leaveTo="transform scale-95 opacity-0"
+                            >
+                              <Disclosure.Panel static>
+                                {skappData && skylink !== skappData.skylink && (
+                                  <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
+                                    {JSON.stringify(skappData, null, 2)}
+                                  </pre>
+                                )}
+                              </Disclosure.Panel>
+                            </Transition>
+                          </>
                         )}
-                      </div>
+                      </Disclosure>
 
                       {skappData && !skappData.metadata.name && !processing && (
                         <p className="text-xs text-error">
@@ -206,24 +228,22 @@ export default function InstallFromSkylinkModal() {
                   Close
                 </button>
 
-                {skappData && !existingSkappDuplicate && (
-                  <button
-                    type="button"
-                    className={classNames(
-                      "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
-                      {
-                        "bg-primary hover:bg-primary-light": !(processing || error || existingSkappDuplicate),
-                        "border border-palette-300 bg-palette-100 cursor-auto":
-                          processing || error || existingSkappDuplicate,
-                      }
-                    )}
-                    onClick={handleConfirm}
-                    disabled={processing || error || isStorageProcessing || existingSkappDuplicate}
-                    ref={acceptButtonRef}
-                  >
-                    {processing ? "Please wait" : "Add to Homescreen"}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className={classNames(
+                    "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
+                    {
+                      "bg-primary hover:bg-primary-light": !(processing || error || existingSkappDuplicate),
+                      "border border-palette-300 bg-palette-100 cursor-auto":
+                        processing || error || existingSkappDuplicate,
+                    }
+                  )}
+                  onClick={handleConfirm}
+                  disabled={processing || error || isStorageProcessing || existingSkappDuplicate}
+                  ref={acceptButtonRef}
+                >
+                  {processing ? "Please wait" : "Add to Homescreen"}
+                </button>
               </div>
             </div>
           </Transition.Child>
