@@ -49,7 +49,10 @@ export default function Homescreen() {
             <h1 className="text-3xl font-bold leading-tight text-gray-900">Your Homescreen</h1>
 
             <div className="flex flex-col text-right space-y-1">
-              <Link href="#" className="text-xs text-palette-400 hover:text-primary transition-colors">
+              <Link
+                href="https://support.siasky.net/key-concepts/homescreen"
+                className="text-xs text-palette-400 hover:text-primary transition-colors"
+              >
                 What is Homescreen
               </Link>
               <Link
