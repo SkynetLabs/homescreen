@@ -9,7 +9,6 @@ const emptyManifest = {
   icon: null,
   description: "No description found.",
   themeColor: "#000000",
-  manifestFound: false,
 };
 
 async function getSkynetMetadata(skylink) {
@@ -69,13 +68,8 @@ export default async function getDappMetadata(skylink) {
     // parse the manifset file, grabbing best key-values
     const parsedManifest = parseManifest(manifest, manifestUrlBase);
 
-    let parsedMetadata = {};
-
-    // if missing or incomplete manifest...
-    if (!parsedManifest.manifestFound) {
-      // parse metadata using body text and parsed html.
-      parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
-    }
+    // parse metadata using body text and parsed html.
+    const parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
 
     // combine results from parsers, with Manifest taking priority
     return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, ...parsedManifest, skylink };
@@ -96,13 +90,8 @@ function parseManifest(manifest, url) {
   const iconUrl = icon ? new URL(url + icon) : undefined;
   const skylink = manifest.skylink || undefined;
 
-  // if not all found, manifest is incomplete, flag as "false"
-  const manifestFound = chosenName && description && themeColor && icon && iconUrl && skylink ? true : false;
-
-  const parsed = { name: chosenName, icon: iconUrl, description, themeColor, skylink, manifestFound };
-
   // return parsed after removing undefined keys.
-  return JSON.parse(JSON.stringify(parsed));
+  return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink }));
 }
 
 // Use index.html metadata fields to fill out missing Dapp Data
@@ -131,8 +120,6 @@ async function parseMetadata(html, doc, url) {
   const description = og.ogDescription || md.description || undefined;
   const themeColor = og.themeColor || undefined;
 
-  const parsed = { name, icon, description, themeColor };
-
   // return parsed after removing undefined keys.
-  return JSON.parse(JSON.stringify(parsed));
+  return JSON.parse(JSON.stringify({ name, icon, description, themeColor }));
 }
