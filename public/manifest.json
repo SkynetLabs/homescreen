@@ -1,6 +1,6 @@
 {
   "short_name": "Skynet Homescreen",
-  "name": "All your favorite skapps together in one place",
+  "name": "All your favorite dapps together in one place",
   "icons": [
     { "src": "icons/icon-48x48.png", "sizes": "48x48", "type": "image/png" },
     { "src": "icons/icon-72x72.png", "sizes": "72x72", "type": "image/png" },

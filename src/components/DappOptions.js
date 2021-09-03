@@ -15,29 +15,29 @@ const getResolvedSkylink = async (skylink) => {
   return data.skylink;
 };
 
-export default function SkappOptions({ skapp }) {
-  const { isStorageProcessing, updateSkapp, removeSkapp } = React.useContext(StorageContext);
+export default function DappOptions({ dapp }) {
+  const { isStorageProcessing, updateDapp, removeDapp } = React.useContext(StorageContext);
   const history = useHistory();
 
   const handleRemove = () => {
     if (!isStorageProcessing) {
-      const removing = removeSkapp(skapp.id);
+      const removing = removeDapp(dapp.id);
 
       toast.promise(removing, {
-        pending: "Removing skapp...",
-        success: "Skapp removed!",
-        error: (error) => `Failed removing skapp: ${error.message}`,
+        pending: "Removing dapp...",
+        success: "Dapp removed!",
+        error: (error) => `Failed removing dapp: ${error.message}`,
       });
     }
   };
 
   const handleToggleFavorite = () => {
     if (!isStorageProcessing) {
-      const updating = updateSkapp({ ...skapp, favorite: !skapp.favorite });
+      const updating = updateDapp({ ...dapp, favorite: !dapp.favorite });
 
       toast.promise(updating, {
-        pending: skapp.favorite ? "Removing skapp from favorites" : "Adding skapp to favorites",
-        success: skapp.favorite ? "Skapp removed from favorites" : "Skapp added to favorites",
+        pending: dapp.favorite ? "Removing dapp from favorites" : "Adding dapp to favorites",
+        success: dapp.favorite ? "Dapp removed from favorites" : "Dapp added to favorites",
         error: (error) => `Toggling favorites failed: ${error.message}`,
       });
     }
@@ -47,10 +47,10 @@ export default function SkappOptions({ skapp }) {
     const toastId = toast.loading("Checking for updates...");
 
     try {
-      const resolvedSkylink = await getResolvedSkylink(skapp.resolverSkylink);
+      const resolvedSkylink = await getResolvedSkylink(dapp.resolverSkylink);
 
-      if (resolvedSkylink !== skapp.skylink) {
-        history.push(`/skylink/${skapp.resolverSkylink}`);
+      if (resolvedSkylink !== dapp.skylink) {
+        history.push(`/skylink/${dapp.resolverSkylink}`);
 
         toast.dismiss(toastId);
       } else {
@@ -108,12 +108,12 @@ export default function SkappOptions({ skapp }) {
                         "text-palette-600": !disabled,
                       })}
                     >
-                      {skapp.favorite ? "Remove from favorites" : "Add to favorites"}
+                      {dapp.favorite ? "Remove from favorites" : "Add to favorites"}
                     </button>
                   )}
                 </Menu.Item>
 
-                {skapp.resolverSkylink && (
+                {dapp.resolverSkylink && (
                   <Menu.Item>
                     {({ active, disabled }) => (
                       <button

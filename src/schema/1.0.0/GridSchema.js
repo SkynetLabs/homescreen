@@ -1,12 +1,12 @@
 import * as yup from "yup";
 import { schemaVersion } from "./schemaVersion";
-import { SkappSchema } from "./SkappsSchema";
+import { DappSchema } from "./DappsSchema";
 
 export const GridGroupsSchema = yup
   .array(
     yup.object({
-      order: yup.array(yup.reach(SkappSchema, "id")).ensure(),
-      favorites: yup.array(yup.reach(SkappSchema, "id")).ensure(),
+      order: yup.array(yup.reach(DappSchema, "id")).ensure(),
+      favorites: yup.array(yup.reach(DappSchema, "id")).ensure(),
     })
   )
   .ensure();

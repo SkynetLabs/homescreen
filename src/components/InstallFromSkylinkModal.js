@@ -6,27 +6,27 @@ import { toast } from "react-toastify";
 import ms from "ms";
 import classNames from "classnames";
 import skynetClient from "../services/skynetClient";
-import SkappCard from "./SkappCard";
-import getSkappMetadata from "../services/getSkappMetadata";
+import DappCard from "./DappCard";
+import getDappMetadata from "../services/getDappMetadata";
 import { StorageContext } from "../state/StorageContext";
 import { ReactComponent as Cog } from "../svg/Cog.svg";
 
 export default function InstallFromSkylinkModal() {
   const { skylink } = useParams();
   const history = useHistory();
-  const [skappData, setSkappData] = useState(null);
+  const [dappData, setDappData] = useState(null);
   const [open, setOpen] = useState(true);
-  const { isStorageProcessing, updateSkapp, skapps } = React.useContext(StorageContext);
+  const { isStorageProcessing, updateDapp, dapps } = React.useContext(StorageContext);
   const [processing, setProcessing] = React.useState(false);
   const [error, setError] = React.useState("");
 
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
-  const existingSkapp = skapps.find(
-    ({ resolverSkylink }) => resolverSkylink && resolverSkylink === skappData?.resolverSkylink
+  const existingDapp = dapps.find(
+    ({ resolverSkylink }) => resolverSkylink && resolverSkylink === dappData?.resolverSkylink
   );
-  const existingSkappDuplicate = existingSkapp && existingSkapp.skylink === skappData.skylink;
+  const existingDappDuplicate = existingDapp && existingDapp.skylink === dappData.skylink;
 
   const getResolvedSkylink = async (skylink) => {
     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
@@ -38,12 +38,12 @@ export default function InstallFromSkylinkModal() {
   const handleConfirm = async () => {
     setProcessing(true);
 
-    const toastId = toast.loading("Pinning your skapp");
+    const toastId = toast.loading("Pinning your dapp");
 
     try {
-      await skynetClient.pinSkylink(skappData.skylink);
-      toast.update(toastId, { render: "Adding skapp to your Homescreen" });
-      await updateSkapp(skappData);
+      await skynetClient.pinSkylink(dappData.skylink);
+      toast.update(toastId, { render: "Adding dapp to your Homescreen" });
+      await updateDapp(dappData);
       toast.update(toastId, { render: "All done!", type: toast.TYPE.SUCCESS, isLoading: false, autoClose: ms("5s") });
       handleClose();
     } catch (error) {
@@ -84,7 +84,7 @@ export default function InstallFromSkylinkModal() {
         }
 
         try {
-          const metadata = await getSkappMetadata(data.skylink);
+          const metadata = await getDappMetadata(data.skylink);
 
           data.metadata = {};
           if (metadata.name) data.metadata.name = metadata.name;
@@ -99,9 +99,9 @@ export default function InstallFromSkylinkModal() {
         }
 
         setProcessing(false);
-        setSkappData(data);
+        setDappData(data);
       } else {
-        setSkappData(null);
+        setDappData(null);
       }
     })();
   }, [skylink]);
@@ -150,9 +150,9 @@ export default function InstallFromSkylinkModal() {
                   </Dialog.Title>
                   {skylink && (
                     <div className="mt-4 text-sm space-y-4 text-palette-400">
-                      {skappData ? (
+                      {dappData ? (
                         <>
-                          <SkappCard skapp={skappData} actions={false} />
+                          <DappCard dapp={dappData} actions={false} />
                           <Disclosure>
                             {({ open }) => (
                               <>
@@ -171,9 +171,9 @@ export default function InstallFromSkylinkModal() {
                                   leaveTo="transform scale-95 opacity-0"
                                 >
                                   <Disclosure.Panel static>
-                                    {skappData && (
+                                    {dappData && (
                                       <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
-                                        {JSON.stringify(skappData, null, 2)}
+                                        {JSON.stringify(dappData, null, 2)}
                                       </pre>
                                     )}
                                   </Disclosure.Panel>
@@ -184,34 +184,34 @@ export default function InstallFromSkylinkModal() {
                         </>
                       ) : (
                         <span className="flex items-center justify-center">
-                          <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
-                          skapp metadata, please wait
+                          <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading dapp
+                          metadata, please wait
                         </span>
                       )}
 
-                      {skappData && !skappData.metadata.name && !processing && (
+                      {dappData && !dappData.metadata.name && !processing && (
                         <p className="text-xs text-error">
-                          Either we couldn't find skapp metadata in the manifest or the skapp manifest was not found.
+                          Either we couldn't find dapp metadata in the manifest or the dapp manifest was not found.
                         </p>
                       )}
 
                       {error && <p className="text-error">{error}</p>}
 
-                      {existingSkappDuplicate && (
+                      {existingDappDuplicate && (
                         <p>
-                          This skapp is already on your Homescreen, there is no need to add it again. You can close this
+                          This dapp is already on your Homescreen, there is no need to add it again. You can close this
                           window.
                         </p>
                       )}
 
-                      {existingSkapp && !existingSkappDuplicate && (
+                      {existingDapp && !existingDappDuplicate && (
                         <p>
-                          This skapp is already on your Homescreen but it resolves to a different skylink. Would you
-                          like to update it to this specific skylink?
+                          This dapp is already on your Homescreen but it resolves to a different skylink. Would you like
+                          to update it to this specific skylink?
                         </p>
                       )}
 
-                      {!existingSkappDuplicate && (
+                      {!existingDappDuplicate && (
                         <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
                       )}
                     </div>
@@ -234,13 +234,13 @@ export default function InstallFromSkylinkModal() {
                   className={classNames(
                     "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
                     {
-                      "bg-primary hover:bg-primary-light": !(processing || error || existingSkappDuplicate),
+                      "bg-primary hover:bg-primary-light": !(processing || error || existingDappDuplicate),
                       "border border-palette-300 bg-palette-100 cursor-auto":
-                        processing || error || existingSkappDuplicate,
+                        processing || error || existingDappDuplicate,
                     }
                   )}
                   onClick={handleConfirm}
-                  disabled={processing || error || isStorageProcessing || existingSkappDuplicate}
+                  disabled={processing || error || isStorageProcessing || existingDappDuplicate}
                   ref={acceptButtonRef}
                 >
                   {processing ? "Please wait" : "Add to Homescreen"}

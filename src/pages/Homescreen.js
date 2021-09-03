@@ -3,7 +3,7 @@ import { Disclosure } from "@headlessui/react";
 import { Route, Switch } from "react-router-dom";
 import { AuthContext } from "../state/AuthContext";
 import { StorageContext } from "../state/StorageContext";
-import SkappGrid from "../components/SkappGrid";
+import DappGrid from "../components/DappGrid";
 import MySkyButton from "../components/MySkyButton";
 import Spinner from "../components/Spinner";
 import Link from "../components/Link";
@@ -12,15 +12,15 @@ import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 
 export default function Homescreen() {
   const { mySkyInitialising, user } = React.useContext(AuthContext);
-  const { isStorageInitialised, skapps } = React.useContext(StorageContext);
+  const { isStorageInitialised, dapps } = React.useContext(StorageContext);
 
   const showMySkyAuthSection = !mySkyInitialising && !user;
   const showInitialisingSpinner = mySkyInitialising || (user && !isStorageInitialised);
-  const showEmptySkappsSection = isStorageInitialised && skapps.length === 0;
-  const showSkappsSection = isStorageInitialised && skapps.length > 0;
+  const showEmptyDappsSection = isStorageInitialised && dapps.length === 0;
+  const showDappsSection = isStorageInitialised && dapps.length > 0;
 
-  const favorites = skapps?.filter(({ favorite }) => favorite);
-  const others = skapps?.filter(({ favorite }) => !favorite);
+  const favorites = dapps?.filter(({ favorite }) => favorite);
+  const others = dapps?.filter(({ favorite }) => !favorite);
 
   return (
     <div className="min-h-screen bg-white">
@@ -56,7 +56,7 @@ export default function Homescreen() {
                 href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app "
                 className="text-xs text-palette-400 hover:text-primary transition-colors"
               >
-                How to add new skapps
+                How to add new dapps
               </Link>
               <Link
                 href="https://docs.siasky.net/integrations/homescreen"
@@ -69,15 +69,15 @@ export default function Homescreen() {
         </header>
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {showSkappsSection && (
+            {showDappsSection && (
               <div className="px-4 py-8 sm:px-0 space-y-12">
                 {/* <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" /> */}
-                {favorites && Boolean(favorites.length) && <SkappGrid title="Favorite Skapps" skapps={favorites} />}
-                {others && Boolean(others.length) && <SkappGrid title="All Skapps" skapps={others} />}
+                {favorites && Boolean(favorites.length) && <DappGrid title="Favorite Dapps" dapps={favorites} />}
+                {others && Boolean(others.length) && <DappGrid title="All Dapps" dapps={others} />}
               </div>
             )}
 
-            {showEmptySkappsSection && (
+            {showEmptyDappsSection && (
               <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
                 <h2 className="text-xl font-semibold sm:text-2xl space-y-2">
                   <span className="block">Welcome stranger!</span>

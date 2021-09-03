@@ -1,49 +1,49 @@
 import * as React from "react";
 import { ClockIcon } from "@heroicons/react/outline";
 import Link from "../components/Link";
-import SkappOptions from "../components/SkappOptions";
+import DappOptions from "../components/DappOptions";
 import skynetClient from "../services/skynetClient";
 import RelativeDate from "../components/RelativeDate";
 
-const skappInitials = (skapp) => {
-  if (skapp.initials) return skapp.initials;
-  if (skapp.metadata.name) return skapp.metadata.name.slice(0, 4).trim();
+const dappInitials = (dapp) => {
+  if (dapp.initials) return dapp.initials;
+  if (dapp.metadata.name) return dapp.metadata.name.slice(0, 4).trim();
 
-  return skapp.skylink.slice(-4);
+  return dapp.skylink.slice(-4);
 };
 
-export default function SkappCard({ skapp, actions = true }) {
+export default function DappCard({ dapp, actions = true }) {
   const [skylinkUrl, setSkylinkUrl] = React.useState("");
 
   React.useEffect(() => {
     (async () => {
-      const skylinkUrl = await skynetClient.getSkylinkUrl(skapp.skylink, { subdomain: true });
+      const skylinkUrl = await skynetClient.getSkylinkUrl(dapp.skylink, { subdomain: true });
 
       setSkylinkUrl(skylinkUrl);
     })();
-  }, [skapp.skylink]);
+  }, [dapp.skylink]);
 
   return (
-    <div key={skapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-palette-200">
+    <div key={dapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-palette-200">
       <Link
         href={skylinkUrl}
         className="flex-shrink-0 flex items-center justify-center w-16 h-16 m-2 text-white text-sm font-medium overflow-hidden rounded-md"
-        style={{ backgroundColor: skapp.metadata.icon ? null : skapp.metadata.themeColor ?? "#242424" }}
+        style={{ backgroundColor: dapp.metadata.icon ? null : dapp.metadata.themeColor ?? "#242424" }}
       >
-        {skapp.metadata.icon ? <img src={skapp.metadata.icon} alt={skappInitials(skapp)} /> : skappInitials(skapp)}
+        {dapp.metadata.icon ? <img src={dapp.metadata.icon} alt={dappInitials(dapp)} /> : dappInitials(dapp)}
       </Link>
 
       <div className="flex-1 flex items-center justify-between truncate">
         <div className="flex-1 px-4 py-2 text-sm truncate space-y-1 text-left">
           <Link href={skylinkUrl} className="font-semibold text-palette-600 hover:text-primary transition-colors">
-            {skapp.metadata.name ?? skapp.skylink}
+            {dapp.metadata.name ?? dapp.skylink}
           </Link>
 
-          <p className="text-palette-400 text-xs truncate">{skapp.metadata.description ?? skapp.skylink}</p>
+          <p className="text-palette-400 text-xs truncate">{dapp.metadata.description ?? dapp.skylink}</p>
 
-          {skapp.addedOn && (
+          {dapp.addedOn && (
             <p className="text-palette-300 text-xs flex items-center flex-row">
-              <ClockIcon className="w-4 inline-flex mr-1" /> installed <RelativeDate date={skapp.addedOn} />
+              <ClockIcon className="w-4 inline-flex mr-1" /> installed <RelativeDate date={dapp.addedOn} />
             </p>
           )}
         </div>
@@ -51,7 +51,7 @@ export default function SkappCard({ skapp, actions = true }) {
 
       {actions && (
         <div className="flex items-center pr-4">
-          <SkappOptions skapp={skapp} />
+          <DappOptions dapp={dapp} />
         </div>
       )}
     </div>

@@ -1,3 +1,3 @@
 export * from "./GridSchema";
-export * from "./SkappsSchema";
+export * from "./DappsSchema";
 export * from "./schemaVersion";

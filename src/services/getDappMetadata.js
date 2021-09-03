@@ -32,7 +32,7 @@ async function getSkynetMetadata(skylink) {
   }
 }
 
-export default async function getSkappMetadata(skylink) {
+export default async function getDappMetadata(skylink) {
   const skynetMetadata = await getSkynetMetadata(skylink);
 
   try {
@@ -86,7 +86,7 @@ export default async function getSkappMetadata(skylink) {
   }
 }
 
-// Use a manifest file json to fill out required Skapp Data
+// Use a manifest file json to fill out required Dapp Data
 function parseManifest(manifest, url) {
   // Choose a definitive set of properties used in frontend
   const chosenName = manifest.short_name || manifest.name || undefined;
@@ -104,7 +104,7 @@ function parseManifest(manifest, url) {
   return JSON.parse(JSON.stringify(parsed));
 }
 
-// Use index.html metadata fields to fill out missing Skapp Data
+// Use index.html metadata fields to fill out missing Dapp Data
 async function parseMetadata(html, doc, url) {
   const { result: og } = await ogs({
     html,

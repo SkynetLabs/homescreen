@@ -12,51 +12,51 @@ const storageConsistencyMessage = "Storage is already processing a request, you 
 const initialState = {
   isStorageInitialised: false,
   isStorageProcessing: false,
-  skapps: [],
+  dapps: [],
   grid: null,
 };
 
 export default function StorageContextProvider({ children }) {
   const { mySky, user } = React.useContext(AuthContext);
   const [state, setState] = React.useState(initialState);
-  const { skapps, isStorageProcessing } = state;
+  const { dapps, isStorageProcessing } = state;
 
-  const refreshSkapps = React.useCallback(async () => {
+  const refreshDapps = React.useCallback(async () => {
     try {
-      const { data } = await mySky.getJSON(`${dataDomain}/skapps`);
+      const { data } = await mySky.getJSON(`${dataDomain}/dapps`);
 
       // TODO: will need migration here instead of dropping all previous data
-      if (!schema.current.SkappsSchema.isValidSync(data)) {
-        throw new Error("/skapps response does not match current data schema");
+      if (!schema.current.DappsSchema.isValidSync(data)) {
+        throw new Error("/dapps response does not match current data schema");
       }
 
-      setState((state) => ({ ...state, isStorageInitialised: true, skapps: data.element }));
+      setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.element }));
     } catch (error) {
       console.log(error.message);
 
-      // no skapps yet or schema invalid, skapps should be empty
-      setState((state) => ({ ...state, isStorageInitialised: true, skapps: [] }));
+      // no dapps yet or schema invalid, dapps should be empty
+      setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
     }
   }, [mySky, setState]);
 
-  const persistSkapps = React.useCallback(
-    async (skapps) => {
+  const persistDapps = React.useCallback(
+    async (dapps) => {
       try {
-        const data = schema.current.SkappsSchema.cast({ element: skapps });
+        const data = schema.current.DappsSchema.cast({ element: dapps });
 
-        await mySky.setJSON(`${dataDomain}/skapps`, data);
+        await mySky.setJSON(`${dataDomain}/dapps`, data);
 
-        setState((state) => ({ ...state, skapps: data.element }));
+        setState((state) => ({ ...state, dapps: data.element }));
       } catch (error) {
         toast.warning(error.message);
 
-        await refreshSkapps();
+        await refreshDapps();
       }
     },
-    [mySky, setState, refreshSkapps]
+    [mySky, setState, refreshDapps]
   );
 
-  const removeSkapp = React.useCallback(
+  const removeDapp = React.useCallback(
     async (id) => {
       if (isStorageProcessing) {
         toast.error(storageConsistencyMessage);
@@ -65,15 +65,15 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: true }));
 
-      await persistSkapps(skapps.filter((skapp) => skapp.id !== id));
+      await persistDapps(dapps.filter((dapp) => dapp.id !== id));
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, skapps, persistSkapps]
+    [isStorageProcessing, dapps, persistDapps]
   );
 
-  const updateSkapp = React.useCallback(
-    async (skapp) => {
+  const updateDapp = React.useCallback(
+    async (dapp) => {
       if (isStorageProcessing) {
         toast.error(storageConsistencyMessage);
         return;
@@ -81,33 +81,33 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: true }));
 
-      const index = skapps.findIndex(({ id }) => skapp.id === id);
+      const index = dapps.findIndex(({ id }) => dapp.id === id);
 
       if (index === -1) {
-        await persistSkapps([...skapps, skapp]);
+        await persistDapps([...dapps, dapp]);
       } else {
-        if (skapp.skylink !== skapps[index].skylink) {
-          skapp.skylinkHistory = [...skapp.skylinkHistory, { skylink: skapps[index].skylink }];
+        if (dapp.skylink !== dapps[index].skylink) {
+          dapp.skylinkHistory = [...dapp.skylinkHistory, { skylink: dapps[index].skylink }];
         }
 
-        await persistSkapps([...skapps.slice(0, index), skapp, ...skapps.slice(index + 1)]);
+        await persistDapps([...dapps.slice(0, index), dapp, ...dapps.slice(index + 1)]);
       }
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, skapps, persistSkapps]
+    [isStorageProcessing, dapps, persistDapps]
   );
 
   const storageContext = React.useMemo(() => {
-    return { ...state, removeSkapp, updateSkapp };
-  }, [state, removeSkapp, updateSkapp]);
+    return { ...state, removeDapp, updateDapp };
+  }, [state, removeDapp, updateDapp]);
 
   React.useEffect(() => {
     (async () => {
-      if (user) await refreshSkapps();
+      if (user) await refreshDapps();
       else setState(initialState);
     })();
-  }, [user, setState, refreshSkapps]);
+  }, [user, setState, refreshDapps]);
 
   return <StorageContext.Provider value={storageContext}>{children}</StorageContext.Provider>;
 }
