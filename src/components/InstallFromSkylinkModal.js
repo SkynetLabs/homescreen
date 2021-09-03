@@ -151,42 +151,43 @@ export default function InstallFromSkylinkModal() {
                   {skylink && (
                     <div className="mt-4 text-sm space-y-4 text-palette-400">
                       {skappData ? (
-                        <SkappCard skapp={skappData} actions={false} />
+                        <>
+                          <SkappCard skapp={skappData} actions={false} />
+                          <Disclosure>
+                            {({ open }) => (
+                              <>
+                                {!open && (
+                                  <Disclosure.Button className="text-xs text-underline">
+                                    show extended skylink details
+                                  </Disclosure.Button>
+                                )}
+                                <Transition
+                                  show={open}
+                                  enter="transition duration-100 ease-out"
+                                  enterFrom="transform scale-95 opacity-0"
+                                  enterTo="transform scale-100 opacity-100"
+                                  leave="transition duration-75 ease-out"
+                                  leaveFrom="transform scale-100 opacity-100"
+                                  leaveTo="transform scale-95 opacity-0"
+                                >
+                                  <Disclosure.Panel static>
+                                    {skappData && (
+                                      <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
+                                        {JSON.stringify(skappData, null, 2)}
+                                      </pre>
+                                    )}
+                                  </Disclosure.Panel>
+                                </Transition>
+                              </>
+                            )}
+                          </Disclosure>
+                        </>
                       ) : (
                         <span className="flex items-center justify-center">
                           <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
                           skapp metadata, please wait
                         </span>
                       )}
-
-                      <Disclosure>
-                        {({ open }) => (
-                          <>
-                            {!open && (
-                              <Disclosure.Button className="text-xs text-underline">
-                                show extended skylink details
-                              </Disclosure.Button>
-                            )}
-                            <Transition
-                              show={open}
-                              enter="transition duration-100 ease-out"
-                              enterFrom="transform scale-95 opacity-0"
-                              enterTo="transform scale-100 opacity-100"
-                              leave="transition duration-75 ease-out"
-                              leaveFrom="transform scale-100 opacity-100"
-                              leaveTo="transform scale-95 opacity-0"
-                            >
-                              <Disclosure.Panel static>
-                                {skappData && skylink !== skappData.skylink && (
-                                  <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
-                                    {JSON.stringify(skappData, null, 2)}
-                                  </pre>
-                                )}
-                              </Disclosure.Panel>
-                            </Transition>
-                          </>
-                        )}
-                      </Disclosure>
 
                       {skappData && !skappData.metadata.name && !processing && (
                         <p className="text-xs text-error">
