@@ -71,7 +71,6 @@ export default function Homescreen() {
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {showDappsSection && (
               <div className="px-4 py-8 sm:px-0 space-y-12">
-                {/* <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" /> */}
                 {favorites && Boolean(favorites.length) && <DappGrid title="Favorite Dapps" dapps={favorites} />}
                 {others && Boolean(others.length) && <DappGrid title="All Dapps" dapps={others} />}
               </div>

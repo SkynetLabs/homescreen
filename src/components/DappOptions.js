@@ -2,6 +2,7 @@ import * as React from "react";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import ms from "ms";
+import * as clipboardy from "clipboardy";
 import { useHistory } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
@@ -18,58 +19,97 @@ const getResolvedSkylink = async (skylink) => {
 export default function DappOptions({ dapp }) {
   const { isStorageProcessing, updateDapp, removeDapp } = React.useContext(StorageContext);
   const history = useHistory();
+  const actions = React.useMemo(
+    () => [
+      {
+        name: (dapp) => (dapp.favorite ? "Remove from favorites" : "Add to favorites"),
+        disabled: () => isStorageProcessing,
+        onClick: (dapp) => {
+          if (isStorageProcessing) return;
 
-  const handleRemove = () => {
-    if (!isStorageProcessing) {
-      const removing = removeDapp(dapp.id);
+          const updating = updateDapp({ ...dapp, favorite: !dapp.favorite });
 
-      toast.promise(removing, {
-        pending: "Removing dapp...",
-        success: "Dapp removed!",
-        error: (error) => `Failed removing dapp: ${error.message}`,
-      });
-    }
-  };
+          toast.promise(updating, {
+            pending: dapp.favorite ? "Removing dapp from favorites" : "Adding dapp to favorites",
+            success: dapp.favorite ? "Dapp removed from favorites" : "Dapp added to favorites",
+            error: (error) => `Toggling favorites failed: ${error.message}`,
+          });
+        },
+      },
+      {
+        name: () => "Check for updates",
+        hidden: (dapp) => !dapp.resolverSkylink,
+        onClick: async (dapp) => {
+          const toastId = toast.loading("Checking for updates...");
 
-  const handleToggleFavorite = () => {
-    if (!isStorageProcessing) {
-      const updating = updateDapp({ ...dapp, favorite: !dapp.favorite });
+          try {
+            const resolvedSkylink = await getResolvedSkylink(dapp.resolverSkylink);
 
-      toast.promise(updating, {
-        pending: dapp.favorite ? "Removing dapp from favorites" : "Adding dapp to favorites",
-        success: dapp.favorite ? "Dapp removed from favorites" : "Dapp added to favorites",
-        error: (error) => `Toggling favorites failed: ${error.message}`,
-      });
-    }
-  };
+            if (resolvedSkylink !== dapp.skylink) {
+              history.push(`/skylink/${dapp.resolverSkylink}`);
 
-  const handleCheckForUpdates = async () => {
-    const toastId = toast.loading("Checking for updates...");
+              toast.dismiss(toastId);
+            } else {
+              toast.update(toastId, {
+                render: "You have the latest version!",
+                type: toast.TYPE.SUCCESS,
+                isLoading: false,
+                autoClose: ms("3s"),
+              });
+            }
+          } catch (error) {
+            toast.update(toastId, {
+              render: `Failed checking for updates: ${error.message}`,
+              type: toast.TYPE.ERROR,
+              isLoading: false,
+              autoClose: ms("10s"),
+            });
+          }
+        },
+      },
+      {
+        name: () => "Copy dapp url",
+        onClick: async (dapp) => {
+          const skylinkUrl = await skynetClient.getSkylinkUrl(dapp.resolverSkylink ?? dapp.skylink, {
+            subdomain: true,
+          });
+          await clipboardy.write(skylinkUrl);
+          toast.success("Dapp url copied to clipboard!");
+        },
+      },
+      {
+        name: () => "Copy direct skylink",
+        onClick: async (dapp) => {
+          await clipboardy.write(dapp.skylink);
+          toast.success("Direct skylink copied to clipboard!");
+        },
+      },
+      {
+        name: () => "Copy resolver skylink",
+        hidden: (dapp) => !dapp.resolverSkylink,
+        onClick: async (dapp) => {
+          await clipboardy.write(dapp.resolverSkylink);
+          toast.success("Resolver skylink copied to clipboard!");
+        },
+      },
+      {
+        name: () => "Remove",
+        disabled: () => isStorageProcessing,
+        onClick: (dapp) => {
+          if (isStorageProcessing) return;
 
-    try {
-      const resolvedSkylink = await getResolvedSkylink(dapp.resolverSkylink);
+          const removing = removeDapp(dapp.id);
 
-      if (resolvedSkylink !== dapp.skylink) {
-        history.push(`/skylink/${dapp.resolverSkylink}`);
-
-        toast.dismiss(toastId);
-      } else {
-        toast.update(toastId, {
-          render: "You have the latest version!",
-          type: toast.TYPE.SUCCESS,
-          isLoading: false,
-          autoClose: ms("3s"),
-        });
-      }
-    } catch (error) {
-      toast.update(toastId, {
-        render: `Failed checking for updates: ${error.message}`,
-        type: toast.TYPE.ERROR,
-        isLoading: false,
-        autoClose: ms("10s"),
-      });
-    }
-  };
+          toast.promise(removing, {
+            pending: "Removing dapp...",
+            success: "Dapp removed!",
+            error: (error) => `Failed removing dapp: ${error.message}`,
+          });
+        },
+      },
+    ],
+    [isStorageProcessing, history, removeDapp, updateDapp]
+  );
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -94,58 +134,28 @@ export default function DappOptions({ dapp }) {
           >
             <Menu.Items
               static
-              className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-palette-100 focus:outline-none"
             >
               <div className="py-1">
-                <Menu.Item disabled={isStorageProcessing}>
-                  {({ active, disabled }) => (
-                    <button
-                      type="button"
-                      onClick={handleToggleFavorite}
-                      className={classNames("block px-4 py-2 text-sm w-full text-left", {
-                        "bg-palette-100": active,
-                        "text-palette-300": disabled,
-                        "text-palette-600": !disabled,
-                      })}
-                    >
-                      {dapp.favorite ? "Remove from favorites" : "Add to favorites"}
-                    </button>
-                  )}
-                </Menu.Item>
-
-                {dapp.resolverSkylink && (
-                  <Menu.Item>
-                    {({ active, disabled }) => (
-                      <button
-                        type="button"
-                        onClick={handleCheckForUpdates}
-                        className={classNames("block px-4 py-2 text-sm w-full text-left", {
-                          "bg-palette-100": active,
-                          "text-palette-300": disabled,
-                          "text-palette-600": !disabled,
-                        })}
-                      >
-                        Check for updates
-                      </button>
-                    )}
-                  </Menu.Item>
-                )}
-
-                <Menu.Item disabled={isStorageProcessing}>
-                  {({ active, disabled }) => (
-                    <button
-                      type="button"
-                      onClick={handleRemove}
-                      className={classNames("block px-4 py-2 text-sm w-full text-left", {
-                        "bg-palette-100": active,
-                        "text-palette-300": disabled,
-                        "text-palette-600": !disabled,
-                      })}
-                    >
-                      Remove
-                    </button>
-                  )}
-                </Menu.Item>
+                {actions
+                  .filter((action) => !(action.hidden && action.hidden(dapp)))
+                  .map((action, index) => (
+                    <Menu.Item key={index} disabled={Boolean(action.disabled) && action.disabled(dapp)}>
+                      {({ active, disabled }) => (
+                        <button
+                          type="button"
+                          onClick={() => action.onClick(dapp)}
+                          className={classNames("block px-4 py-2 text-sm w-full text-left", {
+                            "bg-palette-100": active,
+                            "text-palette-300": disabled,
+                            "text-palette-600": !disabled,
+                          })}
+                        >
+                          {action.name(dapp)}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
               </div>
             </Menu.Items>
           </Transition>
