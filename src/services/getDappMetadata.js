@@ -94,11 +94,12 @@ function parseManifest(manifest, url) {
   const themeColor = manifest.theme_color || undefined;
   const icon = manifest.icons[0].src || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(url + icon) : undefined;
+  const skylink = manifest.skylink || undefined;
 
   // if not all found, manifest is incomplete, flag as "false"
-  const manifestFound = chosenName && description && themeColor && icon && iconUrl ? true : false;
+  const manifestFound = chosenName && description && themeColor && icon && iconUrl && skylink ? true : false;
 
-  const parsed = { name: chosenName, icon: iconUrl, description, themeColor, manifestFound };
+  const parsed = { name: chosenName, icon: iconUrl, description, themeColor, skylink, manifestFound };
 
   // return parsed after removing undefined keys.
   return JSON.parse(JSON.stringify(parsed));
