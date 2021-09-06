@@ -68,16 +68,6 @@ export default function DappOptions({ dapp }) {
         },
       },
       {
-        name: () => "Copy dapp url",
-        onClick: async (dapp) => {
-          const skylinkUrl = await skynetClient.getSkylinkUrl(dapp.resolverSkylink ?? dapp.skylink, {
-            subdomain: true,
-          });
-          await clipboardy.write(skylinkUrl);
-          toast.success("Dapp url copied to clipboard!");
-        },
-      },
-      {
         name: () => "Copy direct skylink",
         onClick: async (dapp) => {
           await clipboardy.write(dapp.skylink);

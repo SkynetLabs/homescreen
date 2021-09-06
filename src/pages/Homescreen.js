@@ -9,6 +9,8 @@ import Spinner from "../components/Spinner";
 import Link from "../components/Link";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
+import TopBanner from "../components/TopBanner";
+import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
 
 export default function Homescreen() {
   const { mySkyInitialising, user } = React.useContext(AuthContext);
@@ -24,6 +26,13 @@ export default function Homescreen() {
 
   return (
     <div className="min-h-screen bg-white">
+      <TopBanner
+        title="This is a top bar where we will put information about going live, I need a copy for that though!"
+        titleShort="This is a shorter version of going live!"
+        linkUrl="https://homescreen.hns.siasky.net/"
+        linkTitle="Learn more or go to or what"
+        allowDimiss={false}
+      />
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -50,22 +59,16 @@ export default function Homescreen() {
 
             <div className="flex flex-col text-right space-y-1">
               <Link
-                href="https://support.siasky.net/key-concepts/homescreen"
-                className="text-xs text-palette-400 hover:text-primary transition-colors"
+                href="https://docs.siasky.net/integrations/homescreen"
+                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
-                What is Homescreen
+                <ExternalLink className="fill-current inline-block" height={18} /> Documentation and FAQ
               </Link>
               <Link
                 href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app "
-                className="text-xs text-palette-400 hover:text-primary transition-colors"
+                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
-                How to add new dapps
-              </Link>
-              <Link
-                href="https://docs.siasky.net/integrations/homescreen"
-                className="text-xs text-palette-400 hover:text-primary transition-colors"
-              >
-                Documentation and FAQ
+                <ExternalLink className="fill-current inline-block" height={18} /> Add Homescreen Support to Your App
               </Link>
             </div>
           </div>

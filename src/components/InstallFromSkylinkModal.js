@@ -197,12 +197,7 @@ export default function InstallFromSkylinkModal() {
 
                       {error && <p className="text-error">{error}</p>}
 
-                      {existingDappDuplicate && (
-                        <p>
-                          This dapp is already on your Homescreen, there is no need to add it again. You can close this
-                          window.
-                        </p>
-                      )}
+                      {existingDappDuplicate && <p>This version of the dapp is already saved to your Homescreen.</p>}
 
                       {existingDapp && !existingDappDuplicate && (
                         <p>
@@ -226,7 +221,7 @@ export default function InstallFromSkylinkModal() {
                   onClick={handleClose}
                   ref={closeButtonRef}
                 >
-                  Close
+                  Cancel
                 </button>
 
                 <button
