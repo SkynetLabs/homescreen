@@ -32,8 +32,6 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.element }));
     } catch (error) {
-      console.log(error.message);
-
       // no dapps yet or schema invalid, dapps should be empty
       setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
     }

@@ -110,11 +110,6 @@ async function parseMetadata(html, doc, url) {
   // const doc = new Document(html);
   const md = getMetadata(doc, url);
   const ogImage = og.ogImage ? new URL(og.ogImage.url, url) : undefined;
-
-  // Haven't found usecase to test.
-  console.log(og);
-  console.log(md);
-
   const name = og.ogTitle || md.title || undefined;
   const icon = ogImage || md.icon || md.image || undefined;
   const description = og.ogDescription || md.description || undefined;
