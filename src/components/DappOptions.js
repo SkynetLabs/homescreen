@@ -1,7 +1,6 @@
 import * as React from "react";
 import classNames from "classnames";
 import { toast } from "react-toastify";
-import ms from "ms";
 import * as clipboardy from "clipboardy";
 import { useHistory } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";

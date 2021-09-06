@@ -3,7 +3,6 @@ import { useHistory, useParams } from "react-router-dom";
 import { isSkylinkV2, parseSkylink } from "skynet-js";
 import { Dialog, Transition, Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
-import ms from "ms";
 import classNames from "classnames";
 import skynetClient from "../services/skynetClient";
 import DappCard from "./DappCard";
