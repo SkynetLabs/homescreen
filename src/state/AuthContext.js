@@ -2,7 +2,7 @@ import * as React from "react";
 import skynetClient from "../services/skynetClient";
 import { Permission, PermCategory, PermType } from "skynet-js";
 
-export const dataDomain = "homeapp.hns";
+export const dataDomain = "homescreen.hns";
 export const AuthContext = React.createContext();
 
 export default function SkynetContextProvider({ children }) {

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import schema from "../schema";
 import { AuthContext } from "./AuthContext";
 
-export const dataDomain = "homeapp.hns";
+export const dataDomain = "homescreen.hns";
 export const StorageContext = React.createContext();
 
 // const consistencyException = new Error("Storage is already processing a request, you can retry once it's finished");
