@@ -28,17 +28,17 @@ export default function InstallFromSkylink() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex flex-1 justify-end">
       <label htmlFor="search" className="hidden text-sm font-medium text-gray-700">
         Quick search
       </label>
-      <div className="relative flex items-center">
+      <div className="relative flex items-center flex-1 max-w-md">
         <input
           type="text"
           name="search"
           id="search"
           placeholder="Add from skylink"
-          className="shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 sm:text-sm border-palette-300 rounded-md hover:bg-palette-100 focus:bg-white"
+          className="shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 text-sm border-palette-300 rounded-md hover:bg-palette-100 focus:bg-white"
           value={skylink}
           onChange={(event) => setSkylink(event.target.value)}
         />
