@@ -44,15 +44,10 @@ export default function InstallFromSkylinkModal() {
       await skynetClient.pinSkylink(dappData.skylink);
       toast.update(toastId, { render: "Adding dapp to your Homescreen" });
       await updateDapp(dappData);
-      toast.update(toastId, { render: "All done!", type: toast.TYPE.SUCCESS, isLoading: false, autoClose: ms("5s") });
+      toast.success("All done!", { toastId, updateId: toastId });
       handleClose();
     } catch (error) {
-      toast.update(toastId, {
-        render: error.message,
-        type: toast.TYPE.FAILURE,
-        isLoading: false,
-        autoClose: ms("10s"),
-      });
+      toast.error(error.message, { toastId, updateId: toastId });
     }
 
     setProcessing(false);

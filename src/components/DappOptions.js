@@ -50,20 +50,10 @@ export default function DappOptions({ dapp }) {
 
               toast.dismiss(toastId);
             } else {
-              toast.update(toastId, {
-                render: "You have the latest version!",
-                type: toast.TYPE.SUCCESS,
-                isLoading: false,
-                autoClose: ms("3s"),
-              });
+              toast.success("You have the latest version!", { toastId, updateId: toastId });
             }
           } catch (error) {
-            toast.update(toastId, {
-              render: `Failed checking for updates: ${error.message}`,
-              type: toast.TYPE.ERROR,
-              isLoading: false,
-              autoClose: ms("10s"),
-            });
+            toast.error(error.message, { toastId, updateId: toastId });
           }
         },
       },
