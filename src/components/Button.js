@@ -1,8 +1,8 @@
-import classnames from "classnames";
+import classNames from "classnames";
 import Link from "./Link";
 
 export default function Button({ children, buttonColor, ...props }) {
-  const className = classnames(
+  const className = classNames(
     "block w-full rounded-md border border-transparent px-5 py-3 text-base font-semibold shadow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:px-10 transition-colors duration-200 text-center",
     {
       "bg-primary text-palette-600 hover:bg-primary-light": buttonColor === "primary",

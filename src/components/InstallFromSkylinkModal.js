@@ -1,54 +1,61 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Dialog, Transition } from "@headlessui/react";
+import { isSkylinkV2, parseSkylink } from "skynet-js";
+import { Dialog, Transition, Disclosure } from "@headlessui/react";
+import { toast } from "react-toastify";
 import classNames from "classnames";
-import Link from "./Link";
 import skynetClient from "../services/skynetClient";
-import SkappCard from "./SkappCard";
-import getSkappMetadata from "../services/getSkappMetadata";
-import { SkynetContext } from "../state/SkynetContext";
+import DappCard from "./DappCard";
+import getDappMetadata from "../services/getDappMetadata";
+import { StorageContext } from "../state/StorageContext";
 import { ReactComponent as Cog } from "../svg/Cog.svg";
 
 export default function InstallFromSkylinkModal() {
   const { skylink } = useParams();
   const history = useHistory();
-  const [skappData, setSkappData] = useState(null);
+  const [dappData, setDappData] = useState(null);
   const [open, setOpen] = useState(true);
-  const { updateSkapp } = React.useContext(SkynetContext);
+  const { isStorageProcessing, updateDapp, dapps } = React.useContext(StorageContext);
   const [processing, setProcessing] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
-  // commit f349fc2 wasn't using the var which was only usage of this function.
-  // const getResolvedSkylink = async (skylink) => {
-  //   try {
-  //     // todo: this should be native skynetClient.resolveSkylink call once we have it
-  //     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
-  //     const { data } = await skynetClient.executeRequest({ url });
+  const existingDapp = dapps.find(
+    ({ resolverSkylink }) => resolverSkylink && resolverSkylink === dappData?.resolverSkylink
+  );
+  const existingDappDuplicate = existingDapp && existingDapp.skylink === dappData.skylink;
 
-  //     return data.skylink;
-  //   } catch (error) {
-  //     return skylink;
-  //   }
-  // };
+  const getResolvedSkylink = async (skylink) => {
+    const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
+    const { data } = await skynetClient.executeRequest({ url });
+
+    return data.skylink;
+  };
 
   const handleConfirm = async () => {
     setProcessing(true);
-    try {
-      // commit f349fc2 wasn't using this var.
-      // const resolvedSkylink = await getResolvedSkylink(skylink);
 
-      await Promise.all([skynetClient.pinSkylink(skappData.skylink), updateSkapp(skappData.skylink, skappData)]);
-      handleClose();
+    const toastId = toast.loading("Pinning your dapp");
+
+    try {
+      await skynetClient.pinSkylink(dappData.skylink);
+      toast.update(toastId, { render: "Adding dapp to your Homescreen" });
+      await updateDapp(existingDapp ? { ...dappData, id: existingDapp.id } : dappData);
+      toast.success("All done!", { toastId, updateId: toastId });
+      handleClose(true);
     } catch (error) {
-      console.log(error);
+      toast.error(error.message, { toastId, updateId: toastId });
+      setProcessing(false);
     }
-    setProcessing(false);
   };
 
-  const handleClose = () => {
-    if (processing) return;
+  const handleClose = (force = false) => {
+    if (processing) {
+      if (force) setProcessing(false);
+      else return;
+    }
 
     setOpen(false);
     history.replace("/");
@@ -57,30 +64,40 @@ export default function InstallFromSkylinkModal() {
   React.useEffect(() => {
     (async () => {
       if (skylink) {
+        const validSkylink = parseSkylink(skylink);
+
+        if (!validSkylink) {
+          return setError("Your skylink is invalid!");
+        }
+
         setProcessing(true);
 
-        const requestedSkylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
-        const data = { requestedSkylink: skylink, requestedSkylinkUrl };
+        const data = { skylink };
+
+        if (isSkylinkV2(validSkylink)) {
+          data.resolverSkylink = validSkylink;
+          data.skylink = await getResolvedSkylink(validSkylink);
+        }
 
         try {
-          const metadata = await getSkappMetadata(requestedSkylinkUrl);
+          const metadata = await getDappMetadata(data.skylink);
 
-          if (metadata.name) data.name = metadata.name;
-          if (metadata.description) data.description = metadata.description;
-          if (metadata.icon) data.icon = metadata.icon;
-          if (metadata.skylink) data.skylink = metadata.skylink;
-          if (metadata.skylink) {
-            data.skylinkUrl = await skynetClient.getSkylinkUrl(metadata.skylink, { subdomain: true });
-          }
-          data.manifestFound = metadata.manifestFound || false;
+          data.metadata = {};
+          if (metadata.name) data.metadata.name = metadata.name;
+          if (metadata.description) data.metadata.description = metadata.description;
+          if (metadata.themeColor) data.metadata.themeColor = metadata.themeColor;
+          if (metadata.icon) data.metadata.icon = metadata.icon;
+
+          // if resolved skylink is included in metadata then use it
+          if (metadata.skylink && isSkylinkV2(metadata.skylink)) data.resolverSkylink = metadata.skylink;
         } catch (error) {
-          // couldn't fetch metadata
+          // couldn't fetch metadata - ignore it
         }
 
         setProcessing(false);
-        setSkappData(data);
+        setDappData(data);
       } else {
-        setSkappData(null);
+        setDappData(null);
       }
     })();
   }, [skylink]);
@@ -125,70 +142,96 @@ export default function InstallFromSkylinkModal() {
               <div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium">
-                    Adding new application
+                    Save to Homescreen
                   </Dialog.Title>
                   {skylink && (
-                    <div className="mt-4 text-sm space-y-2 text-palette-400">
-                      <p>You have requested to add a skylink to your Homescreen.</p>
-
-                      <p>
-                        <Link href={skappData?.requestedSkylinkUrl}>{skylink}</Link>
-                      </p>
-
-                      {skappData && skylink !== skappData.skylink && (
+                    <div className="mt-4 text-sm space-y-4 text-palette-400">
+                      {dappData ? (
                         <>
-                          <p>resolves to</p>
-
-                          <p>
-                            <Link href={skappData?.skylinkUrl}>{skappData.skylink}</Link>
-                          </p>
+                          <DappCard dapp={dappData} actions={false} />
+                          <Disclosure>
+                            {({ open }) => (
+                              <>
+                                {!open && (
+                                  <Disclosure.Button className="text-xs text-underline">
+                                    show extended skylink details
+                                  </Disclosure.Button>
+                                )}
+                                <Transition
+                                  show={open}
+                                  enter="transition duration-100 ease-out"
+                                  enterFrom="transform scale-95 opacity-0"
+                                  enterTo="transform scale-100 opacity-100"
+                                  leave="transition duration-75 ease-out"
+                                  leaveFrom="transform scale-100 opacity-100"
+                                  leaveTo="transform scale-95 opacity-0"
+                                >
+                                  <Disclosure.Panel static>
+                                    {dappData && (
+                                      <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
+                                        {JSON.stringify(dappData, null, 2)}
+                                      </pre>
+                                    )}
+                                  </Disclosure.Panel>
+                                </Transition>
+                              </>
+                            )}
+                          </Disclosure>
                         </>
+                      ) : (
+                        <span className="flex items-center justify-center">
+                          <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading dapp
+                          metadata, please wait
+                        </span>
                       )}
 
-                      <div className="py-4">
-                        {skappData ? (
-                          <SkappCard skapp={skappData} actions={false} />
-                        ) : (
-                          <span className="flex items-center justify-center">
-                            <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading
-                            skapp metadata, please wait
-                          </span>
-                        )}
-                      </div>
-
-                      {skappData && !skappData.manifestFound && !processing && (
-                        <p className="text-xs text-red-500">
-                          No manifest found – app may not be ready to use with Homescreen.
+                      {dappData && !dappData.metadata.name && !processing && (
+                        <p className="text-xs text-error">
+                          Either we couldn't find dapp metadata in the manifest or the dapp manifest was not found.
                         </p>
                       )}
-                      <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
+
+                      {error && <p className="text-error">{error}</p>}
+
+                      {existingDappDuplicate && <p>This version of the dapp is already saved to your Homescreen.</p>}
+
+                      {existingDapp && !existingDappDuplicate && (
+                        <p>Another version of this dapp is already on your Homescreen.</p>
+                      )}
+
+                      {!existingDapp && (
+                        <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+
+              <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
                 <button
                   type="button"
-                  className={classNames(
-                    "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2  text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
-                    {
-                      "bg-primary hover:bg-primary-light": !processing,
-                      "border border-palette-300 bg-palette-100 cursor-auto": processing,
-                    }
-                  )}
-                  onClick={handleConfirm}
-                  disabled={processing}
-                  ref={acceptButtonRef}
-                >
-                  {processing ? "Please wait" : "Add to Homescreen"}
-                </button>
-                <button
-                  type="button"
-                  className="hover:bg-palette-100 mt-3 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:col-start-1 sm:text-sm"
+                  className="hover:bg-palette-100 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:text-sm"
                   onClick={handleClose}
                   ref={closeButtonRef}
                 >
-                  Close
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className={classNames(
+                    "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
+                    {
+                      "bg-primary hover:bg-primary-light": !(processing || error || existingDappDuplicate),
+                      "border border-palette-200 bg-palette-100 cursor-auto text-palette-200":
+                        processing || error || existingDappDuplicate,
+                    }
+                  )}
+                  onClick={handleConfirm}
+                  disabled={processing || error || isStorageProcessing || existingDappDuplicate}
+                  ref={acceptButtonRef}
+                >
+                  {processing ? "Please wait" : existingDapp && !existingDappDuplicate ? "Update" : "Add to Homescreen"}
                 </button>
               </div>
             </div>

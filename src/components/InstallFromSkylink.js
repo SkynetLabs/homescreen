@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import { parseSkylink } from "skynet-js";
+import { toast } from "react-toastify";
 
 export default function InstallFromSkylink() {
   const [skylink, setSkylink] = React.useState("");
@@ -13,27 +14,31 @@ export default function InstallFromSkylink() {
       try {
         const parsed = parseSkylink(skylink);
 
-        history.push(`/skylink/${parsed}`);
+        if (parsed) {
+          history.push(`/skylink/${parsed}`);
 
-        setSkylink("");
+          setSkylink("");
+        } else {
+          toast.error("Invalid skylink!");
+        }
       } catch (error) {
-        console.log(error); // invalid skylink
+        toast.error(error.message);
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex flex-1 justify-end">
       <label htmlFor="search" className="hidden text-sm font-medium text-gray-700">
         Quick search
       </label>
-      <div className="relative flex items-center">
+      <div className="relative flex items-center flex-1 max-w-lg">
         <input
           type="text"
           name="search"
           id="search"
           placeholder="Add from skylink"
-          className="shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 sm:text-sm border-palette-300 rounded-md hover:bg-palette-100 focus:bg-white"
+          className="shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 text-sm border-palette-300 rounded-md hover:bg-palette-100 focus:bg-white"
           value={skylink}
           onChange={(event) => setSkylink(event.target.value)}
         />

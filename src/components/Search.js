@@ -9,7 +9,7 @@ export default function Search() {
           type="text"
           name="search"
           id="search"
-          placeholder="Find a skapp"
+          placeholder="Find a dapp"
           className="shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 sm:text-sm border-palette-300 rounded-md hover:bg-palette-100 focus:bg-white"
         />
         <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
