@@ -25,12 +25,11 @@ export default function Homescreen() {
   const others = dapps?.filter(({ favorite }) => !favorite);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <TopBanner
-        title="This is a top bar where we will put information about going live, I need a copy for that though!"
-        titleShort="This is a shorter version of going live!"
+        title="Homescreen is now released and available at homescreen.hns.siasky.net."
         linkUrl="https://homescreen.hns.siasky.net/"
-        linkTitle="Learn more or go to or what"
+        linkTitle="Try it out"
         allowDimiss={false}
       />
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
