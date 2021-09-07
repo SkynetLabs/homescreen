@@ -9,6 +9,7 @@ import MySkyButton from "../components/MySkyButton";
 import Link from "../components/Link";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
+import TopBanner from "../components/TopBanner";
 // import InstallFromGithubModal from "../components/InstallModal";
 
 export default function Homescreen() {
@@ -19,6 +20,12 @@ export default function Homescreen() {
 
   return (
     <div className="min-h-screen bg-white">
+      <TopBanner
+        title="Homescreen is now released and available at homescreen.hns.siasky.net."
+        linkUrl="https://homescreen.hns.siasky.net/"
+        linkTitle="Try it out"
+        allowDimiss={false}
+      />
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
