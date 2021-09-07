@@ -113,7 +113,7 @@ export default function Homescreen() {
           Open Source
           <a
             className="hover:underline inline-flex items-center ml-2"
-            href="https://github.com/kwypchlo/skydb-example"
+            href="https://github.com/skynetlabs/homescreen"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -121,7 +121,7 @@ export default function Homescreen() {
           </a>
           {process.env.REACT_APP_GIT_SHA && (
             <a
-              href={`https://github.com/skynetlabs/homescreen-beta/commit/${process.env.REACT_APP_GIT_SHA}`}
+              href={`https://github.com/skynetlabs/homescreen/commit/${process.env.REACT_APP_GIT_SHA}`}
               className="ml-2 hover:underline"
             >
               #{process.env.REACT_APP_GIT_SHA.substr(0, 7)}
