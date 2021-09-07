@@ -22,19 +22,24 @@ export default function StorageContextProvider({ children }) {
 
   const refreshStorage = React.useCallback(async () => {
     try {
-      const { data } = await mySky.getJSON(`${dataDomain}/dapps`);
-      const dapps = schema.current.Schema.cast(data);
+      const { data: response } = await mySky.getJSON(`${dataDomain}/dapps`);
 
-      // TODO: will need migration here instead of dropping all previous data
-      if (!schema.current.Schema.isValidSync(dapps)) {
-        throw new Error("/dapps response does not match current data schema");
+      if (response) {
+        const data = schema.current.Schema.cast(response);
+
+        // TODO: will need migration here instead of dropping all previous data
+        if (!schema.current.Schema.isValidSync(data)) {
+          throw new Error("/dapps response does not match current data schema");
+        }
+
+        setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.elements }));
+      } else {
+        setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
       }
-
-      setState((state) => ({ ...state, isStorageInitialised: true, dapps: dapps.elements }));
     } catch (error) {
       console.log(error.message);
 
-      // no dapps yet or schema invalid, dapps should be empty
+      // server error or invalid schema
       setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
     }
   }, [mySky, setState]);
@@ -42,11 +47,11 @@ export default function StorageContextProvider({ children }) {
   const persistStorage = React.useCallback(
     async (dapps) => {
       try {
-        const { elements } = schema.current.Schema.cast({ elements: dapps });
+        const data = schema.current.Schema.cast({ elements: dapps });
 
-        await mySky.setJSON(`${dataDomain}/dapps`, elements);
+        await mySky.setJSON(`${dataDomain}/dapps`, data);
 
-        setState((state) => ({ ...state, dapps: elements }));
+        setState((state) => ({ ...state, dapps: data.elements }));
       } catch (error) {
         toast.warning(error.message);
 
@@ -86,9 +91,9 @@ export default function StorageContextProvider({ children }) {
       if (index === -1) {
         await persistStorage([...dapps, dapp]);
       } else {
-        if (dapp.skylink !== dapps[index].skylink) {
-          dapp.skylinkHistory = [...dapp.skylinkHistory, { skylink: dapps[index].skylink }];
-        }
+        // if (dapp.skylink !== dapps[index].skylink) {
+        //   dapp.skylinkHistory = [...dapp.skylinkHistory, { skylink: dapps[index].skylink }];
+        // }
 
         await persistStorage([...dapps.slice(0, index), dapp, ...dapps.slice(index + 1)]);
       }

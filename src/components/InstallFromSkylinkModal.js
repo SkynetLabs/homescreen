@@ -42,7 +42,7 @@ export default function InstallFromSkylinkModal() {
     try {
       await skynetClient.pinSkylink(dappData.skylink);
       toast.update(toastId, { render: "Adding dapp to your Homescreen" });
-      await updateDapp(dappData);
+      await updateDapp(existingDapp ? { ...dappData, id: existingDapp.id } : dappData);
       toast.success("All done!", { toastId, updateId: toastId });
       handleClose(true);
     } catch (error) {
@@ -142,7 +142,7 @@ export default function InstallFromSkylinkModal() {
               <div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium">
-                    Adding new Skylink
+                    Save to Homescreen
                   </Dialog.Title>
                   {skylink && (
                     <div className="mt-4 text-sm space-y-4 text-palette-400">
@@ -196,13 +196,10 @@ export default function InstallFromSkylinkModal() {
                       {existingDappDuplicate && <p>This version of the dapp is already saved to your Homescreen.</p>}
 
                       {existingDapp && !existingDappDuplicate && (
-                        <p>
-                          This dapp is already on your Homescreen but it resolves to a different skylink. Would you like
-                          to update it to this specific skylink?
-                        </p>
+                        <p>Another version of this dapp is already on your Homescreen.</p>
                       )}
 
-                      {!existingDappDuplicate && (
+                      {!existingDapp && (
                         <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
                       )}
                     </div>
@@ -226,7 +223,7 @@ export default function InstallFromSkylinkModal() {
                     "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
                     {
                       "bg-primary hover:bg-primary-light": !(processing || error || existingDappDuplicate),
-                      "border border-palette-300 bg-palette-100 cursor-auto":
+                      "border border-palette-200 bg-palette-100 cursor-auto text-palette-200":
                         processing || error || existingDappDuplicate,
                     }
                   )}
@@ -234,7 +231,7 @@ export default function InstallFromSkylinkModal() {
                   disabled={processing || error || isStorageProcessing || existingDappDuplicate}
                   ref={acceptButtonRef}
                 >
-                  {processing ? "Please wait" : "Add to Homescreen"}
+                  {processing ? "Please wait" : existingDapp && !existingDappDuplicate ? "Update" : "Add to Homescreen"}
                 </button>
               </div>
             </div>
