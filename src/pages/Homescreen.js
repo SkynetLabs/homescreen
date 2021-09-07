@@ -61,13 +61,13 @@ export default function Homescreen() {
                 href="https://support.siasky.net/key-concepts/homescreen"
                 className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
-                <ExternalLink className="fill-current inline-block" height={18} /> Documentation and FAQ
+                Documentation and FAQ <ExternalLink className="fill-current inline-block" height={18} />
               </Link>
               <Link
                 href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app "
                 className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
-                <ExternalLink className="fill-current inline-block" height={18} /> Add Homescreen Support to Your App
+                Add Homescreen Support to Your App <ExternalLink className="fill-current inline-block" height={18} />
               </Link>
             </div>
           </div>
