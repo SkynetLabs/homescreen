@@ -9,7 +9,6 @@ import Spinner from "../components/Spinner";
 import Link from "../components/Link";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
-import TopBanner from "../components/TopBanner";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
 import { ReactComponent as Github } from "../assets/simple-icons/github.svg";
 
@@ -26,12 +25,6 @@ export default function Homescreen() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <TopBanner
-        title="Homescreen is now released and available at homescreen.hns.siasky.net."
-        linkUrl="https://homescreen.hns.siasky.net/"
-        linkTitle="Try it out"
-        allowDimiss={false}
-      />
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 space-x-4">
