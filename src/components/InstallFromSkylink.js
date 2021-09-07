@@ -32,7 +32,7 @@ export default function InstallFromSkylink() {
       <label htmlFor="search" className="hidden text-sm font-medium text-gray-700">
         Quick search
       </label>
-      <div className="relative flex items-center flex-1 max-w-md">
+      <div className="relative flex items-center flex-1 max-w-lg">
         <input
           type="text"
           name="search"
