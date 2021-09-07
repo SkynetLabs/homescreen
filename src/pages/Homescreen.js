@@ -58,7 +58,7 @@ export default function Homescreen() {
 
             <div className="flex flex-col text-right space-y-1">
               <Link
-                href="https://docs.siasky.net/integrations/homescreen"
+                href="https://support.siasky.net/key-concepts/homescreen"
                 className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
                 <ExternalLink className="fill-current inline-block" height={18} /> Documentation and FAQ
