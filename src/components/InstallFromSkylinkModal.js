@@ -44,16 +44,18 @@ export default function InstallFromSkylinkModal() {
       toast.update(toastId, { render: "Adding dapp to your Homescreen" });
       await updateDapp(dappData);
       toast.success("All done!", { toastId, updateId: toastId });
-      handleClose();
+      handleClose(true);
     } catch (error) {
       toast.error(error.message, { toastId, updateId: toastId });
+      setProcessing(false);
     }
-
-    setProcessing(false);
   };
 
-  const handleClose = () => {
-    if (processing) return;
+  const handleClose = (force = false) => {
+    if (processing) {
+      if (force) setProcessing(false);
+      else return;
+    }
 
     setOpen(false);
     history.replace("/");
