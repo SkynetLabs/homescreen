@@ -9,6 +9,7 @@ import "@fontsource/source-sans-pro/600.css"; // semibold
 import "@fontsource/source-code-pro/600.css"; // semibold
 import "@fontsource/source-code-pro/700.css"; // bold
 import "react-toastify/dist/ReactToastify.css";
+import "spinkit/spinkit.css";
 import "./assets/main.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
