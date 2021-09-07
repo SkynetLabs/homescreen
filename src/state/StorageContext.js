@@ -21,7 +21,7 @@ export default function StorageContextProvider({ children }) {
   const [state, setState] = React.useState(initialState);
   const { dapps, isStorageProcessing } = state;
 
-  const refreshDapps = React.useCallback(async () => {
+  const refreshStorage = React.useCallback(async () => {
     try {
       const { data } = await mySky.getJSON(`${dataDomain}/dapps`);
 
@@ -37,7 +37,7 @@ export default function StorageContextProvider({ children }) {
     }
   }, [mySky, setState]);
 
-  const persistDapps = React.useCallback(
+  const persistStorage = React.useCallback(
     async (dapps) => {
       try {
         const data = schema.current.DappsSchema.cast({ element: dapps });
@@ -48,10 +48,10 @@ export default function StorageContextProvider({ children }) {
       } catch (error) {
         toast.warning(error.message);
 
-        await refreshDapps();
+        await refreshStorage();
       }
     },
-    [mySky, setState, refreshDapps]
+    [mySky, setState, refreshStorage]
   );
 
   const removeDapp = React.useCallback(
@@ -63,11 +63,11 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: true }));
 
-      await persistDapps(dapps.filter((dapp) => dapp.id !== id));
+      await persistStorage(dapps.filter((dapp) => dapp.id !== id));
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, dapps, persistDapps]
+    [isStorageProcessing, dapps, persistStorage]
   );
 
   const updateDapp = React.useCallback(
@@ -82,18 +82,18 @@ export default function StorageContextProvider({ children }) {
       const index = dapps.findIndex(({ id }) => dapp.id === id);
 
       if (index === -1) {
-        await persistDapps([...dapps, dapp]);
+        await persistStorage([...dapps, dapp]);
       } else {
         if (dapp.skylink !== dapps[index].skylink) {
           dapp.skylinkHistory = [...dapp.skylinkHistory, { skylink: dapps[index].skylink }];
         }
 
-        await persistDapps([...dapps.slice(0, index), dapp, ...dapps.slice(index + 1)]);
+        await persistStorage([...dapps.slice(0, index), dapp, ...dapps.slice(index + 1)]);
       }
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, dapps, persistDapps]
+    [isStorageProcessing, dapps, persistStorage]
   );
 
   const storageContext = React.useMemo(() => {
@@ -102,10 +102,10 @@ export default function StorageContextProvider({ children }) {
 
   React.useEffect(() => {
     (async () => {
-      if (user) await refreshDapps();
+      if (user) await refreshStorage();
       else setState(initialState);
     })();
-  }, [user, setState, refreshDapps]);
+  }, [user, setState, refreshStorage]);
 
   return <StorageContext.Provider value={storageContext}>{children}</StorageContext.Provider>;
 }
