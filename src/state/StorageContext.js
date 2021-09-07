@@ -13,7 +13,6 @@ const initialState = {
   isStorageInitialised: false,
   isStorageProcessing: false,
   dapps: [],
-  grid: null,
 };
 
 export default function StorageContextProvider({ children }) {
@@ -24,14 +23,17 @@ export default function StorageContextProvider({ children }) {
   const refreshStorage = React.useCallback(async () => {
     try {
       const { data } = await mySky.getJSON(`${dataDomain}/dapps`);
+      const dapps = schema.current.Schema.cast(data);
 
       // TODO: will need migration here instead of dropping all previous data
-      if (!schema.current.DappsSchema.isValidSync(data)) {
+      if (!schema.current.Schema.isValidSync(dapps)) {
         throw new Error("/dapps response does not match current data schema");
       }
 
-      setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.element }));
+      setState((state) => ({ ...state, isStorageInitialised: true, dapps: dapps.elements }));
     } catch (error) {
+      console.log(error.message);
+
       // no dapps yet or schema invalid, dapps should be empty
       setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
     }
@@ -40,11 +42,11 @@ export default function StorageContextProvider({ children }) {
   const persistStorage = React.useCallback(
     async (dapps) => {
       try {
-        const data = schema.current.DappsSchema.cast({ element: dapps });
+        const { elements } = schema.current.Schema.cast({ elements: dapps });
 
-        await mySky.setJSON(`${dataDomain}/dapps`, data);
+        await mySky.setJSON(`${dataDomain}/dapps`, elements);
 
-        setState((state) => ({ ...state, dapps: data.element }));
+        setState((state) => ({ ...state, dapps: elements }));
       } catch (error) {
         toast.warning(error.message);
 

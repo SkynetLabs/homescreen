@@ -21,9 +21,8 @@ export default function Homescreen() {
   const showInitialisingSpinner = mySkyInitialising || (user && !isStorageInitialised);
   const showEmptyDappsSection = isStorageInitialised && dapps.length === 0;
   const showDappsSection = isStorageInitialised && dapps.length > 0;
-
-  const favorites = dapps?.filter(({ favorite }) => favorite);
-  const others = dapps?.filter(({ favorite }) => !favorite);
+  const favorites = React.useMemo(() => dapps.filter(({ favorite }) => favorite), [dapps]);
+  const others = React.useMemo(() => dapps.filter(({ favorite }) => !favorite), [dapps]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -77,8 +76,8 @@ export default function Homescreen() {
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {showDappsSection && (
               <div className="px-4 py-8 sm:px-0 space-y-12">
-                {favorites && Boolean(favorites.length) && <DappGrid title="Favorite Dapps" dapps={favorites} />}
-                {others && Boolean(others.length) && <DappGrid title="All Dapps" dapps={others} />}
+                {favorites.length > 0 && <DappGrid title="Favorite Dapps" dapps={favorites} />}
+                {others.length > 0 && <DappGrid title="All Dapps" dapps={others} />}
               </div>
             )}
 

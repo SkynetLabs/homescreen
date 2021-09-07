@@ -56,7 +56,7 @@ export default async function getDappMetadata(skylink) {
       (link) => link.getAttribute("rel") === "manifest"
     );
 
-    if (!manifestTag) throw new Error("No manifest declared.");
+    if (!manifestTag) throw new Error(`${skylink}: no manifest declared`);
 
     const manifestPath = manifestTag.getAttribute("href");
     const { data: manifest } = await skynetClient.getFileContent(skylink, { subdomain: true, path: manifestPath });
@@ -74,7 +74,7 @@ export default async function getDappMetadata(skylink) {
     // combine results from parsers, with Manifest taking priority
     return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, skylink, ...parsedManifest };
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
 
     return { ...emptyManifest, ...skynetMetadata };
   }
