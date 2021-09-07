@@ -36,7 +36,7 @@ export default async function getDappMetadata(skylink) {
 
   try {
     const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
-    const response = await ky.get(skylinkUrl);
+    const response = await ky.get(skylinkUrl, { headers: { range: "bytes=0-20000" } });
     const contentType = response.headers.get("content-type");
 
     if (contentType !== "text/html") {
