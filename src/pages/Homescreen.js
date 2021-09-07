@@ -11,6 +11,7 @@ import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 import TopBanner from "../components/TopBanner";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
+import { ReactComponent as Github } from "../assets/simple-icons/github.svg";
 
 export default function Homescreen() {
   const { mySkyInitialising, user } = React.useContext(AuthContext);
@@ -25,7 +26,7 @@ export default function Homescreen() {
   const others = dapps?.filter(({ favorite }) => !favorite);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <TopBanner
         title="Homescreen is now released and available at homescreen.hns.siasky.net."
         linkUrl="https://homescreen.hns.siasky.net/"
@@ -50,7 +51,6 @@ export default function Homescreen() {
           </div>
         </div>
       </Disclosure>
-
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -115,6 +115,27 @@ export default function Homescreen() {
           </div>
         </main>
       </div>
+      <footer className="m-6 text-center text-sm leading-5 text-palette-200">
+        <div className="inline-flex items-center">
+          Open Source
+          <a
+            className="hover:underline inline-flex items-center ml-2"
+            href="https://github.com/kwypchlo/skydb-example"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Github height="12" className="inline-block fill-current mr-1" /> GitHub
+          </a>
+          {process.env.REACT_APP_GIT_SHA && (
+            <a
+              href={`https://github.com/skynetlabs/homescreen-beta/commit/${process.env.REACT_APP_GIT_SHA}`}
+              className="ml-2 hover:underline"
+            >
+              #{process.env.REACT_APP_GIT_SHA.substr(0, 7)}
+            </a>
+          )}
+        </div>
+      </footer>
 
       {user && (
         <Switch>
