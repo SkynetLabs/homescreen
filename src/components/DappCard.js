@@ -23,14 +23,18 @@ export default function DappCard({ dapp, actions = true }) {
     })();
   }, [dapp.skylink]);
 
+  const iconUrl = React.useMemo(() => {
+    if (dapp.metadata.icon && skylinkUrl) return new URL(dapp.metadata.icon, skylinkUrl).toString();
+  }, [dapp.metadata.icon, skylinkUrl]);
+
   return (
     <div key={dapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-palette-200">
       <Link
         href={skylinkUrl}
         className="flex-shrink-0 flex items-center justify-center w-16 h-16 m-2 text-white text-sm font-medium overflow-hidden rounded-md"
-        style={{ backgroundColor: dapp.metadata.icon ? null : dapp.metadata.themeColor ?? "#242424" }}
+        style={{ backgroundColor: iconUrl ? null : dapp.metadata.themeColor ?? "#242424" }}
       >
-        {dapp.metadata.icon ? <img src={dapp.metadata.icon} alt={dappInitials(dapp)} /> : dappInitials(dapp)}
+        {iconUrl ? <img src={iconUrl} alt={dappInitials(dapp)} /> : dappInitials(dapp)}
       </Link>
 
       <div className="flex-1 flex items-center justify-between truncate">
