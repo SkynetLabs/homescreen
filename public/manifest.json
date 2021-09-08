@@ -2,10 +2,6 @@
   "short_name": "Skynet Homescreen",
   "name": "All your favorite dapps together in one place",
   "icons": [
-    { "src": "icons/icon-48x48.png", "sizes": "48x48", "type": "image/png" },
-    { "src": "icons/icon-72x72.png", "sizes": "72x72", "type": "image/png" },
-    { "src": "icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" },
-    { "src": "icons/icon-144x144.png", "sizes": "144x144", "type": "image/png" },
     { "src": "icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-256x256.png", "sizes": "256x256", "type": "image/png" },
     { "src": "icons/icon-384x384.png", "sizes": "384x384", "type": "image/png" },
@@ -14,7 +10,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#00C65E",
   "background_color": "#ffffff",
   "sklink": "AQBVhwVUwwKa1cNeq354hp1OfVSW9bil8eapztKmODIi1w"
 }
