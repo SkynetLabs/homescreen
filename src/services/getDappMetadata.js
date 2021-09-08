@@ -63,10 +63,9 @@ export default async function getDappMetadata(skylink) {
 
     // Get directory of manifest file for parseManifest since references are relative.
     const manifestUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true, path: manifestPath });
-    const manifestUrlBase = manifestUrl.replace(/\/[^/]+$/, "/");
 
     // parse the manifset file, grabbing best key-values
-    const parsedManifest = parseManifest(manifest, manifestUrlBase);
+    const parsedManifest = parseManifest(manifest, manifestUrl);
 
     // parse metadata using body text and parsed html.
     const parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
@@ -81,13 +80,13 @@ export default async function getDappMetadata(skylink) {
 }
 
 // Use a manifest file json to fill out required Dapp Data
-function parseManifest(manifest, url) {
+function parseManifest(manifest, manifestUrl) {
   // Choose a definitive set of properties used in frontend
   const chosenName = manifest.short_name || manifest.name || undefined;
   const description = manifest.description || undefined;
   const themeColor = manifest.theme_color || undefined;
   const icon = manifest.icons[0].src || manifest.iconPath || undefined;
-  const iconUrl = icon ? new URL(url + icon) : undefined;
+  const iconUrl = icon ? new URL(icon, manifestUrl).pathname : undefined;
   const skylink = manifest.skylink || undefined;
 
   // return parsed after removing undefined keys.
