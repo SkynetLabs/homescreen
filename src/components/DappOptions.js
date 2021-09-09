@@ -6,7 +6,9 @@ import { useHistory } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { StorageContext } from "../state/StorageContext";
+import { StateContext } from "../state/StateContext";
 import skynetClient from "../services/skynetClient";
+import { ClipboardIcon, CloudIcon, HeartIcon, PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 
 const getResolvedSkylink = async (skylink) => {
   const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
@@ -17,12 +19,14 @@ const getResolvedSkylink = async (skylink) => {
 
 export default function DappOptions({ dapp }) {
   const { isStorageProcessing, updateDapp, removeDapp } = React.useContext(StorageContext);
+  const { setStateContext } = React.useContext(StateContext);
   const history = useHistory();
   const actions = React.useMemo(
     () => [
       {
         name: (dapp) => (dapp.favorite ? "Remove from favorites" : "Add to favorites"),
         disabled: () => isStorageProcessing,
+        Icon: HeartIcon,
         onClick: (dapp) => {
           if (isStorageProcessing) return;
 
@@ -38,6 +42,7 @@ export default function DappOptions({ dapp }) {
       {
         name: () => "Check for updates",
         hidden: (dapp) => !dapp.resolverSkylink,
+        Icon: CloudIcon,
         onClick: async (dapp) => {
           const toastId = toast.loading("Checking for updates...");
 
@@ -58,6 +63,7 @@ export default function DappOptions({ dapp }) {
       },
       {
         name: () => "Copy direct skylink",
+        Icon: ClipboardIcon,
         onClick: async (dapp) => {
           await clipboardy.write(dapp.skylink);
           toast.success("Direct skylink copied to clipboard!");
@@ -66,14 +72,23 @@ export default function DappOptions({ dapp }) {
       {
         name: () => "Copy resolver skylink",
         hidden: (dapp) => !dapp.resolverSkylink,
+        Icon: ClipboardIcon,
         onClick: async (dapp) => {
           await clipboardy.write(dapp.resolverSkylink);
           toast.success("Resolver skylink copied to clipboard!");
         },
       },
       {
+        name: () => "View details",
+        Icon: PencilAltIcon,
+        onClick: (dapp) => {
+          setStateContext((stateContext) => ({ ...stateContext, editing: dapp.id }));
+        },
+      },
+      {
         name: () => "Remove",
         disabled: () => isStorageProcessing,
+        Icon: TrashIcon,
         onClick: (dapp) => {
           if (isStorageProcessing) return;
 
@@ -87,7 +102,7 @@ export default function DappOptions({ dapp }) {
         },
       },
     ],
-    [isStorageProcessing, history, removeDapp, updateDapp]
+    [isStorageProcessing, history, removeDapp, updateDapp, setStateContext]
   );
 
   return (
@@ -124,12 +139,18 @@ export default function DappOptions({ dapp }) {
                         <button
                           type="button"
                           onClick={() => action.onClick(dapp)}
-                          className={classNames("block px-4 py-2 text-sm w-full text-left", {
+                          className={classNames("group flex items-center px-4 py-2 text-xs w-full text-left ", {
                             "bg-palette-100": active,
-                            "text-palette-300": disabled,
-                            "text-palette-600": !disabled,
+                            "text-palette-100": disabled,
+                            "text-palette-500": !disabled,
                           })}
                         >
+                          {action.Icon && (
+                            <action.Icon
+                              className="mr-3 h-4 w-4 text-palette-400 group-hover:text-palette-500"
+                              aria-hidden="true"
+                            />
+                          )}
                           {action.name(dapp)}
                         </button>
                       )}

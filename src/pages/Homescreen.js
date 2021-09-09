@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import { AuthContext } from "../state/AuthContext";
 import { StorageContext } from "../state/StorageContext";
 import DappGrid from "../components/DappGrid";
+import DappDetails from "../components/DappDetails";
 import MySkyButton from "../components/MySkyButton";
 import Spinner from "../components/Spinner";
 import Link from "../components/Link";
@@ -137,6 +138,8 @@ export default function Homescreen() {
           </Route>
         </Switch>
       )}
+
+      <DappDetails />
     </div>
   );
 }
