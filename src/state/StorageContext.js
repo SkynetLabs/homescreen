@@ -78,7 +78,7 @@ export default function StorageContextProvider({ children }) {
   );
 
   const updateDapp = React.useCallback(
-    async (dapp) => {
+    async (data) => {
       if (isStorageProcessing) {
         toast.error(storageConsistencyMessage);
         return;
@@ -86,15 +86,19 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: true }));
 
-      const index = dapps.findIndex(({ id }) => dapp.id === id);
+      // cast data into a dapp schema
+      const dapp = schema.current.DappSchema.cast(data);
+
+      const index = dapps.findIndex(({ id }) => data.id === id);
+
+      // add skylink to skylinks collection if it didn't exist yet
+      if (!dapp.skylinks.find(({ skylink }) => skylink === dapp.skylink)) {
+        dapp.skylinks.push({ skylink: dapp.skylink });
+      }
 
       if (index === -1) {
         await persistStorage([...dapps, dapp]);
       } else {
-        // if (dapp.skylink !== dapps[index].skylink) {
-        //   dapp.skylinkHistory = [...dapp.skylinkHistory, { skylink: dapps[index].skylink }];
-        // }
-
         await persistStorage([...dapps.slice(0, index), dapp, ...dapps.slice(index + 1)]);
       }
 

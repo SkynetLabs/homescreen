@@ -6,9 +6,17 @@ import { toast } from "react-toastify";
 import classNames from "classnames";
 import skynetClient from "../services/skynetClient";
 import DappCard from "./DappCard";
+import Link from "./Link";
 import getDappMetadata from "../services/getDappMetadata";
 import { StorageContext } from "../state/StorageContext";
 import { ReactComponent as Cog } from "../svg/Cog.svg";
+import { find, mergeWith } from "lodash-es";
+
+function mergeCustomizer(objValue, srcValue) {
+  if (Array.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
 
 export default function InstallFromSkylinkModal() {
   const { skylink } = useParams();
@@ -22,10 +30,14 @@ export default function InstallFromSkylinkModal() {
   const closeButtonRef = useRef(null);
   const acceptButtonRef = useRef(null);
 
-  const existingDapp = dapps.find(
-    ({ resolverSkylink }) => resolverSkylink && resolverSkylink === dappData?.resolverSkylink
-  );
-  const existingDappDuplicate = existingDapp && existingDapp.skylink === dappData.skylink;
+  // find and match existing dapp by resolver skylink
+  const existingDapp = dappData?.resolverSkylink && find(dapps, { resolverSkylink: dappData.resolverSkylink });
+  const isDuplicateRequest = existingDapp && existingDapp.skylink === dappData.skylink;
+  const isUpdateRequest = Boolean(existingDapp) && !isDuplicateRequest;
+  const isAddNewRequest = !existingDapp;
+
+  const isConfirmDisabled = processing || error || isStorageProcessing || isDuplicateRequest;
+  const isProcessing = processing || isStorageProcessing;
 
   const getResolvedSkylink = async (skylink) => {
     const url = await skynetClient.getSkylinkUrl(skylink, { endpointDownload: "/skynet/resolve/" });
@@ -42,7 +54,7 @@ export default function InstallFromSkylinkModal() {
     try {
       await skynetClient.pinSkylink(dappData.skylink);
       toast.update(toastId, { render: "Adding dapp to your Homescreen" });
-      await updateDapp(existingDapp ? { ...dappData, id: existingDapp.id } : dappData);
+      await updateDapp(mergeWith({}, existingDapp, dappData, mergeCustomizer));
       toast.success("All done!", { toastId, updateId: toastId });
       handleClose(true);
     } catch (error) {
@@ -185,23 +197,25 @@ export default function InstallFromSkylinkModal() {
                         </span>
                       )}
 
-                      {dappData && !dappData.metadata.name && !processing && (
-                        <p className="text-xs text-error">
-                          Either we couldn't find dapp metadata in the manifest or the dapp manifest was not found.
+                      {dappData && !dappData.metadata.icon && !processing && (
+                        <p className="text-error">
+                          manifest file is missing or misconfigured -{" "}
+                          <Link
+                            href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app#3-configure-your-manifest-file"
+                            className="text-error-light hover:underline inline-flex items-center"
+                          >
+                            read more
+                          </Link>
                         </p>
                       )}
 
                       {error && <p className="text-error">{error}</p>}
 
-                      {existingDappDuplicate && <p>This version of the dapp is already saved to your Homescreen.</p>}
+                      {isDuplicateRequest && <p>This version of the dapp is already saved to your Homescreen.</p>}
 
-                      {existingDapp && !existingDappDuplicate && (
-                        <p>Another version of this dapp is already on your Homescreen.</p>
-                      )}
+                      {isUpdateRequest && <p>Another version of this dapp is already on your Homescreen.</p>}
 
-                      {!existingDapp && (
-                        <p>This action will pin the skylink on the current portal and place it on your Homescreen.</p>
-                      )}
+                      {isAddNewRequest && <p>This action will pin the skylink and place it on your Homescreen.</p>}
                     </div>
                   )}
                 </div>
@@ -222,16 +236,15 @@ export default function InstallFromSkylinkModal() {
                   className={classNames(
                     "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
                     {
-                      "bg-primary hover:bg-primary-light": !(processing || error || existingDappDuplicate),
-                      "border border-palette-200 bg-palette-100 cursor-auto text-palette-200":
-                        processing || error || existingDappDuplicate,
+                      "bg-primary hover:bg-primary-light": !isConfirmDisabled,
+                      "border border-palette-200 bg-palette-100 cursor-auto text-palette-200": isConfirmDisabled,
                     }
                   )}
                   onClick={handleConfirm}
-                  disabled={processing || error || isStorageProcessing || existingDappDuplicate}
+                  disabled={isConfirmDisabled}
                   ref={acceptButtonRef}
                 >
-                  {processing ? "Please wait" : existingDapp && !existingDappDuplicate ? "Update" : "Add to Homescreen"}
+                  {isProcessing ? "Please wait" : isUpdateRequest ? "Update" : "Add to Homescreen"}
                 </button>
               </div>
             </div>

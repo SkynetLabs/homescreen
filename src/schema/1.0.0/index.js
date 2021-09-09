@@ -3,25 +3,23 @@ import { nanoid } from "nanoid";
 
 export const schemaVersion = "1.0.0";
 
+export const IdSchema = yup.string().default(() => nanoid());
+export const CurrentDateSchema = yup.date().default(() => new Date());
+export const SkylinkSchema = yup.string().length(46);
+
 export const DappSchema = yup.object({
-  id: yup
-    .string()
-    .required()
-    .default(() => nanoid()),
-  skylink: yup.string().length(46).required(),
-  resolverSkylink: yup.string().optional(),
-  addedOn: yup
-    .date()
-    .required()
-    .default(() => new Date()),
-  skylinkHistory: yup
+  id: IdSchema.required(),
+  skylink: SkylinkSchema.required(),
+  skylinks: yup
     .array(
       yup.object({
-        until: yup.date().default(() => new Date()),
-        skylink: yup.string().required(),
+        skylink: SkylinkSchema.required(),
+        addedOn: CurrentDateSchema,
       })
     )
     .ensure(),
+  resolverSkylink: SkylinkSchema.optional(),
+  addedOn: CurrentDateSchema.required(),
   favorite: yup.boolean().default(false),
   metadata: yup
     .object({

@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import Homescreen from "./pages/Homescreen";
 import AuthContextProvider from "./state/AuthContext";
 import StorageContextProvider from "./state/StorageContext";
+import StateContextProvider from "./state/StateContext";
 
 export default function App() {
   return (
@@ -11,11 +12,13 @@ export default function App() {
       <Router>
         <AuthContextProvider>
           <StorageContextProvider>
-            <Switch>
-              <Route path="/">
-                <Homescreen />
-              </Route>
-            </Switch>
+            <StateContextProvider>
+              <Switch>
+                <Route path="/">
+                  <Homescreen />
+                </Route>
+              </Switch>
+            </StateContextProvider>
           </StorageContextProvider>
         </AuthContextProvider>
       </Router>
