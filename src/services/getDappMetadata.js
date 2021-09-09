@@ -3,6 +3,7 @@ import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
 import skynetClient from "../services/skynetClient";
 import prettyBytes from "pretty-bytes";
+import { get } from "lodash-es";
 
 const emptyManifest = {
   name: "Not Found",
@@ -84,7 +85,7 @@ function parseManifest(manifest, manifestUrl) {
   const chosenName = manifest.short_name || manifest.name || undefined;
   const description = manifest.description || undefined;
   const themeColor = manifest.theme_color || undefined;
-  const icon = manifest.icons[0].src || manifest.iconPath || undefined;
+  const icon = get(manifest.icons, ["0", "src"]) || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(icon, manifestUrl).pathname : undefined;
   const skylink = manifest.skylink || undefined;
 
