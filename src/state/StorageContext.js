@@ -27,18 +27,18 @@ const defaultDapps = [
       icon: "/android-chrome-192x192.png",
     },
   },
-  // {
-  //   resolverSkylink: "",
-  //   skylink: "_AGZuZCyRn5kZMFHBssWYc20poXyez1XMO6hmPqAVcM1qg",
-  //   skylinks: [{ skylink: "_A1WQyJk2lwioirt-8_qrEG94jOT5D3RImMHDtq7dbfr7A" }],
-  //   metadata: {
-  //     name: "Hacker Paste",
-  //     description:
-  //       "Hacker Paste lets you share encrypted text and code snippets through Skynet, a decentralized content delivery network.",
-  //     themeColor: "#ffffff",
-  //     icon: "/static/android-chrome-192x192.png",
-  //   },
-  // },
+  {
+    resolverSkylink: "AQDn5uriOXZFLumP0QhJUO7D3kPkJ2SPciJCiShDnXb1Dw",
+    skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg",
+    skylinks: [{ skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg" }],
+    metadata: {
+      name: "Hacker Paste",
+      description:
+        "Hacker Paste lets you share encrypted text and code snippets through Skynet, a decentralized content delivery network.",
+      themeColor: "#ffffff",
+      icon: "/static/android-chrome-192x192.png",
+    },
+  },
   {
     resolverSkylink: "AQAJGCmM4njSUoFx-YNm64Zgea8QYRo-kHHf3Vht04mYBQ",
     skylink: "_A1WQyJk2lwioirt-8_qrEG94jOT5D3RImMHDtq7dbfr7A",
