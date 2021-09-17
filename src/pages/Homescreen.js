@@ -83,10 +83,16 @@ export default function Homescreen() {
                 Documentation and FAQ <ExternalLink className="fill-current inline-block" height={18} />
               </Link>
               <Link
-                href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app "
+                href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app"
                 className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
               >
                 Add Homescreen Support to Your App <ExternalLink className="fill-current inline-block" height={18} />
+              </Link>
+              <Link
+                href="https://github.com/SkynetLabs/awesome-homescreen"
+                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
+              >
+                Discover Homescreen Apps <ExternalLink className="fill-current inline-block" height={18} />
               </Link>
             </div>
           </div>
