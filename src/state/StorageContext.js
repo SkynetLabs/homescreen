@@ -15,6 +15,54 @@ const initialState = {
   dapps: [],
 };
 
+const defaultDapps = [
+  {
+    resolverSkylink: "AQBLTOv9uMFcNR_NRooBc6Rv7jb4it1cozkWEApU3roLEQ",
+    skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA",
+    skylinks: [{ skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA" }],
+    metadata: {
+      name: "Rift",
+      description: "Your decentralized workspace",
+      themeColor: "#ffffff",
+      icon: "/android-chrome-192x192.png",
+    },
+  },
+  // {
+  //   resolverSkylink: "",
+  //   skylink: "_AGZuZCyRn5kZMFHBssWYc20poXyez1XMO6hmPqAVcM1qg",
+  //   skylinks: [{ skylink: "_A1WQyJk2lwioirt-8_qrEG94jOT5D3RImMHDtq7dbfr7A" }],
+  //   metadata: {
+  //     name: "Hacker Paste",
+  //     description:
+  //       "Hacker Paste lets you share encrypted text and code snippets through Skynet, a decentralized content delivery network.",
+  //     themeColor: "#ffffff",
+  //     icon: "/static/android-chrome-192x192.png",
+  //   },
+  // },
+  {
+    resolverSkylink: "AQAJGCmM4njSUoFx-YNm64Zgea8QYRo-kHHf3Vht04mYBQ",
+    skylink: "_A1WQyJk2lwioirt-8_qrEG94jOT5D3RImMHDtq7dbfr7A",
+    skylinks: [{ skylink: "_A1WQyJk2lwioirt-8_qrEG94jOT5D3RImMHDtq7dbfr7A" }],
+    metadata: {
+      name: "SkyTransfer",
+      description: "Decentralized open source file sharing platform.",
+      themeColor: "#000000",
+      icon: "/assets/skytransfer-promo.jpg",
+    },
+  },
+  {
+    resolverSkylink: "AQDikuO5szw9nTHZvvm0jT_iwRIJ74UqyvReNwHePAkqBQ",
+    skylink: "GABvY0s2-FuyKHtvm90KCVTUvg-NvQJrYdQ7XG8NNqcPYg",
+    skylinks: [{ skylink: "GABvY0s2-FuyKHtvm90KCVTUvg-NvQJrYdQ7XG8NNqcPYg" }],
+    metadata: {
+      name: "SkySend",
+      description: "An open source, highly secure, private and decentralized way to send and share your files.",
+      themeColor: "#57B560",
+      icon: "/resources/icon/android-chrome-192x192.png",
+    },
+  },
+];
+
 export default function StorageContextProvider({ children }) {
   const { mySky, user } = React.useContext(AuthContext);
   const [state, setState] = React.useState(initialState);
@@ -34,7 +82,23 @@ export default function StorageContextProvider({ children }) {
 
         setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.elements }));
       } else {
-        setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
+        // seed the storage with default apps
+        const data = schema.current.Schema.cast({ elements: defaultDapps });
+
+        await mySky.setJSON(`${dataDomain}/dapps`, data);
+
+        setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.elements }));
+
+        toast.info(
+          "Thank you for signing up! We have seeded your Homescreen with couple of apps that might get you started, feel free to manage them in any way you want - this is your personal space.",
+          {
+            autoClose: 60000,
+            hideProgressBar: true,
+            progress: undefined,
+            position: "top-center",
+            className: "bg-blue-100",
+          }
+        );
       }
     } catch (error) {
       console.log(error.message);

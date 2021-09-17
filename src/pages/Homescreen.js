@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Disclosure } from "@headlessui/react";
+import classNames from "classnames";
 import { Route, Switch } from "react-router-dom";
 import { AuthContext } from "../state/AuthContext";
 import { StorageContext } from "../state/StorageContext";
@@ -8,25 +9,35 @@ import DappDetails from "../components/DappDetails";
 import MySkyButton from "../components/MySkyButton";
 import Spinner from "../components/Spinner";
 import Link from "../components/Link";
+import FeatureSection from "../components/FeatureSection";
+import HeaderSection from "../components/HeaderSection";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
 import { ReactComponent as Github } from "../assets/simple-icons/github.svg";
 
+const NotAuthenticated = () => {
+  return (
+    <div className="bg-white">
+      <HeaderSection />
+      <FeatureSection />
+    </div>
+  );
+};
+
 export default function Homescreen() {
   const { mySkyInitialising, user } = React.useContext(AuthContext);
   const { isStorageInitialised, dapps } = React.useContext(StorageContext);
-
   const showMySkyAuthSection = !mySkyInitialising && !user;
   const showInitialisingSpinner = mySkyInitialising || (user && !isStorageInitialised);
   const showEmptyDappsSection = isStorageInitialised && dapps.length === 0;
-  const showDappsSection = isStorageInitialised && dapps.length > 0;
+  const showDappsSection = isStorageInitialised && user && dapps.length > 0;
   const favorites = React.useMemo(() => dapps.filter(({ favorite }) => favorite), [dapps]);
   const others = React.useMemo(() => dapps.filter(({ favorite }) => !favorite), [dapps]);
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Disclosure as="nav" className="bg-white border-b border-gray-200">
+      <Disclosure as="nav" className="bg-white border-b border-palette-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
@@ -35,20 +46,34 @@ export default function Homescreen() {
                 <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
               </div>
             </div>
-            {user && (
-              <div className="flex items-center space-x-4 flex-1 justify-end">
-                <InstallFromSkylink />
-                <MySkyButton />
-              </div>
-            )}
+            <div className="flex items-center space-x-4 flex-1 justify-end">
+              {user && (
+                <div className="hidden sm:flex sm:flex-1">
+                  <InstallFromSkylink />
+                </div>
+              )}
+              <MySkyButton />
+            </div>
           </div>
+          {user && (
+            <div className="block sm:hidden">
+              <InstallFromSkylink />
+            </div>
+          )}
         </div>
       </Disclosure>
 
       <div className="py-10 flex-1">
         <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">Your Homescreen</h1>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end sm:justify-between items-center">
+            <h1
+              className={classNames(
+                "mt-1 text-xl font-extrabold text-palette-600 sm:text-2xl sm:tracking-tight lg:text-3xl hidden sm:block",
+                { invisible: !user }
+              )}
+            >
+              Your Homescreen
+            </h1>
 
             <div className="flex flex-col text-right space-y-1">
               <Link
@@ -94,9 +119,8 @@ export default function Homescreen() {
             )}
 
             {showMySkyAuthSection && (
-              <div className="px-4 py-32 sm:px-0 space-y-6 text-center">
-                <p className="text-palette-500">Please authenticate with MySky to continue</p>
-                <MySkyButton />
+              <div className="py-8 sm:py-16 md:py-24 lg:py-32">
+                <NotAuthenticated />
               </div>
             )}
 

@@ -139,18 +139,13 @@ export default function DappOptions({ dapp }) {
                         <button
                           type="button"
                           onClick={() => action.onClick(dapp)}
-                          className={classNames("group flex items-center px-4 py-2 text-xs w-full text-left ", {
+                          className={classNames("flex items-center px-4 py-2 text-xs w-full text-left ", {
                             "bg-palette-100": active,
-                            "text-palette-100": disabled,
+                            "text-palette-300": disabled,
                             "text-palette-500": !disabled,
                           })}
                         >
-                          {action.Icon && (
-                            <action.Icon
-                              className="mr-3 h-4 w-4 text-palette-400 group-hover:text-palette-500"
-                              aria-hidden="true"
-                            />
-                          )}
+                          {action.Icon && <action.Icon className="mr-3 h-4 w-4" aria-hidden="true" />}
                           {action.name(dapp)}
                         </button>
                       )}

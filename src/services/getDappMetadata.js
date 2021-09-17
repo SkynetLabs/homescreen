@@ -1,4 +1,4 @@
-import ky from "ky";
+import ky from "ky-universal";
 import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
 import skynetClient from "../services/skynetClient";
@@ -79,6 +79,11 @@ export default async function getDappMetadata(skylink) {
   }
 }
 
+const cleanSkylink = (skylink) => {
+  if (!skylink) return skylink;
+  return skylink.replace("sia://", "");
+};
+
 // Use a manifest file json to fill out required Dapp Data
 function parseManifest(manifest, manifestUrl) {
   // Choose a definitive set of properties used in frontend
@@ -87,7 +92,7 @@ function parseManifest(manifest, manifestUrl) {
   const themeColor = manifest.theme_color || undefined;
   const icon = get(manifest.icons, ["0", "src"]) || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(icon, manifestUrl).pathname : undefined;
-  const skylink = manifest.skylink || undefined;
+  const skylink = cleanSkylink(manifest.skylink) || undefined;
 
   // return parsed after removing undefined keys.
   return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink }));
