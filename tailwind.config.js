@@ -1,5 +1,5 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
-const { rose } = require("tailwindcss/colors");
+const { orange } = require("tailwindcss/colors");
 
 const colors = {
   primary: { light: "#33D17E", DEFAULT: "#00c65e" },
@@ -30,7 +30,7 @@ module.exports = {
         mono: ["Source\\ Code\\ Pro", ...defaultTheme.fontFamily.mono],
       },
       colors: {
-        rose,
+        orange,
       },
     },
   },

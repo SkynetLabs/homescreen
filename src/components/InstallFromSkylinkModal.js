@@ -4,6 +4,7 @@ import { isSkylinkV2, parseSkylink } from "skynet-js";
 import { Dialog, Transition, Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import classNames from "classnames";
+import { ExclamationIcon } from "@heroicons/react/outline";
 import skynetClient from "../services/skynetClient";
 import DappCard from "./DappCard";
 import Link from "./Link";
@@ -198,11 +199,11 @@ export default function InstallFromSkylinkModal() {
                       )}
 
                       {dappData && !dappData.metadata.icon && !processing && (
-                        <p className="text-error">
-                          manifest file is missing or misconfigured -{" "}
+                        <p className="text-orange-500 inline-flex items-center space-x-2">
+                          <ExclamationIcon className="w-4 h-4 mr-2" /> manifest is missing or misconfigured:
                           <Link
                             href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app#3-configure-your-manifest-file"
-                            className="text-error-light hover:underline inline-flex items-center"
+                            className="text-orange-500 hover:text-orange-600 inline-flex items-center"
                           >
                             read more
                           </Link>

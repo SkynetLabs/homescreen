@@ -42,8 +42,11 @@ export default function InstallFromSkylink() {
           id="search"
           placeholder="Add from skylink, hns domain or ens domain"
           className={classNames(
-            "shadow-sm focus:ring-primary focus:border-primary block w-full pr-12 text-sm border-palette-300 rounded-md",
-            { "bg-palette-100 text-palette-400": processing, "hover:border-palette-600 focus:bg-white": !processing }
+            "shadow-sm focus:ring-primary focus:border-primary block w-full text-sm border-palette-300 rounded-md",
+            {
+              "bg-palette-100 text-palette-400 pr-12": processing,
+              "hover:border-palette-600 focus:bg-white pr-20": !processing,
+            }
           )}
           value={skylink}
           onChange={(event) => setSkylink(event.target.value)}
