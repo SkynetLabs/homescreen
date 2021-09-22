@@ -10,7 +10,7 @@ const features = [
   {
     name: "Version Control",
     description:
-      "Homescreen retains every copy your saved applications, so you can always return to past version if needed.",
+      "Homescreen retains every copy of your saved applications, so you can always return to an earlier version if needed.",
     icon: TagIcon,
   },
   {
