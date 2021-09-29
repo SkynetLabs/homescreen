@@ -5,7 +5,7 @@ import ky from "ky-universal";
 const SKYLINK_BASE_32_MATCHER = /^(sia:\/\/)?(?<skylink>[a-z0-9_-]{55})(\/.*)?/;
 const HNS_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.hns/;
 const ETH_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.eth/;
-const IPFS_CID_MATCHER = /^ipfs:\/\/(?<cid>[a-zA-Z0-9_-]{46})/;
+const IPFS_CID_MATCHER = /^ipfs:\/\/(?<cid>[a-zA-Z0-9_-]{46,})/;
 
 export default async function searchSkylink(input) {
   try {
