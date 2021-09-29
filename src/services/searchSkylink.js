@@ -83,7 +83,7 @@ async function requestSkylink(address) {
 async function migrateIpfsToSkylink(cid) {
   try {
     // TODO: should we support ipfs endpoint on production portals ?
-    const { skylink } = await ky.get(`https://misc.siasky.net/ipfs/migrate/${cid}`).json();
+    const { skylink } = await ky.get(`https://misc.siasky.net/ipfs/migrate/${cid}`, { timeout: 60000 }).json();
 
     if (skylink) return skylink;
   } catch {
