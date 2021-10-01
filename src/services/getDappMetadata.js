@@ -93,10 +93,10 @@ function parseManifest(manifest, manifestUrl) {
   const icon = get(manifest.icons, ["0", "src"]) || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(icon, manifestUrl).pathname : undefined;
   const skylink = cleanSkylink(manifest.skylink) || undefined;
-  const skyos = manifest.skyos || undefined;
+  const skynetMetadata = manifest.skynet_metadata || undefined;
 
   // return parsed after removing undefined keys.
-  return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink, skyos }));
+  return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink, skynetMetadata }));
 }
 
 // Use index.html metadata fields to fill out missing Dapp Data
