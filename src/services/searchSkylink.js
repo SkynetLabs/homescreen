@@ -1,11 +1,17 @@
 import { parseSkylink, convertSkylinkToBase64 } from "skynet-js";
+import { trim } from "lodash";
 import skynetClient from "./skynetClient";
 import ky from "ky-universal";
 
 const SKYLINK_BASE_32_MATCHER = /^(sia:\/\/)?(?<skylink>[a-z0-9_-]{55})(\/.*)?/;
 const HNS_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.hns/;
 const ETH_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.eth/;
-const IPFS_CID_MATCHER = /^ipfs:\/\/(?<cid>[a-zA-Z0-9_-]{46,})/;
+const IPFS_CID_MATCHER = /^\/?ipfs(:\/)?\/(?<cid>[a-zA-Z0-9_-]{46,})/;
+const SKYLINK_DNSLINK_MATCHER = /dnslink=\/skynet-ns\/(?<skylink>[a-zA-Z0-9_-]{46,})/;
+const IPFS_DNSLINK_MATCHER = /dnslink=\/ipfs\/(?<cid>[a-zA-Z0-9_-]{46,})/;
+const IPNS_DNSLINK_MATCHER = /dnslink=\/ipns\/(?<name>.+)/;
+
+const ipfsApi = "https://misc.siasky.net/ipfs";
 
 export default async function searchSkylink(input) {
   try {
@@ -43,6 +49,34 @@ export default async function searchSkylink(input) {
     const skylink = await requestSkylink(`https://${groups.domain}.eth.link`);
 
     if (skylink) return skylink;
+
+    try {
+      const dns = await ky.get(`${ipfsApi}/eth/dns-query/${groups.domain}.eth`).json();
+      const records = dns.Answer.map(({ data }) => trim(data, '"'));
+
+      // try and match skynet dnslink
+      const matchSkylinkDnslink = records.find((record) => record.match(SKYLINK_DNSLINK_MATCHER));
+      if (matchSkylinkDnslink) return matchSkylinkDnslink.groups.skylink;
+
+      // try and match ipfs dnslink
+      const matchIpfsDnslink = records.find((record) => record.match(IPFS_DNSLINK_MATCHER));
+      if (matchIpfsDnslink) return migrateIpfsToSkylink(matchSkylinkDnslink.groups.cid);
+
+      // try and match ipfs dnslink
+      const ipnsDnslink = records.find((record) => record.match(IPNS_DNSLINK_MATCHER));
+      if (ipnsDnslink) {
+        try {
+          const match = ipnsDnslink.match(IPNS_DNSLINK_MATCHER);
+          const response = await ky.post(`${ipfsApi}/api/v0/name/resolve?arg=${match.groups.name}`).json();
+          const matchIpfsCid = response.Path.match(IPFS_CID_MATCHER);
+          return migrateIpfsToSkylink(matchIpfsCid.groups.cid);
+        } catch {
+          // do nothing
+        }
+      }
+    } catch {
+      return; // do nothing
+    }
   }
 
   // any arbitrary url
@@ -83,7 +117,8 @@ async function requestSkylink(address) {
 async function migrateIpfsToSkylink(cid) {
   try {
     // TODO: should we support ipfs endpoint on production portals ?
-    const { skylink } = await ky.get(`https://misc.siasky.net/ipfs/migrate/${cid}`, { timeout: 60000 }).json();
+    const timeout = 5 * 60 * 1000; // 5 minutes
+    const { skylink } = await ky.get(`${ipfsApi}/migrate/${cid}`, { timeout }).json();
 
     if (skylink) return skylink;
   } catch {
