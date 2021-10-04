@@ -195,7 +195,7 @@ export default function DappDetails() {
                           }
                         )}
                       >
-                        Update
+                        Save
                       </button>
                     </div>
                   </div>
