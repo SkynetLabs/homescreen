@@ -71,7 +71,7 @@ export default async function getDappMetadata(skylink) {
     const parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
 
     // combine results from parsers, with Manifest taking priority
-    return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, skylink, ...parsedManifest };
+    return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, skylink, manifestPath, ...parsedManifest };
   } catch (error) {
     console.error(error.message);
 
@@ -93,10 +93,9 @@ function parseManifest(manifest, manifestUrl) {
   const icon = get(manifest.icons, ["0", "src"]) || manifest.iconPath || undefined;
   const iconUrl = icon ? new URL(icon, manifestUrl).pathname : undefined;
   const skylink = cleanSkylink(manifest.skylink) || undefined;
-  const skynetMetadata = manifest.skynet_metadata || undefined;
 
   // return parsed after removing undefined keys.
-  return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink, skynetMetadata }));
+  return JSON.parse(JSON.stringify({ name: chosenName, icon: iconUrl, description, themeColor, skylink }));
 }
 
 // Use index.html metadata fields to fill out missing Dapp Data
