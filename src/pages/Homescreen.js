@@ -1,17 +1,15 @@
 import * as React from "react";
-import { Disclosure } from "@headlessui/react";
 import classNames from "classnames";
 import { Route, Switch } from "react-router-dom";
 import { AuthContext } from "../state/AuthContext";
 import { StorageContext } from "../state/StorageContext";
 import DappGrid from "../components/DappGrid";
 import DappDetails from "../components/DappDetails";
-import MySkyButton from "../components/MySkyButton";
 import Spinner from "../components/Spinner";
 import Link from "../components/Link";
+import Navigation from "../components/Navigation";
 import FeatureSection from "../components/FeatureSection";
 import HeaderSection from "../components/HeaderSection";
-import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
 import { ReactComponent as Github } from "../assets/simple-icons/github.svg";
@@ -37,7 +35,7 @@ export default function Homescreen() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Disclosure as="nav" className="bg-white border-b border-palette-100">
+      {/* <nav className="bg-white border-b border-palette-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
@@ -61,7 +59,9 @@ export default function Homescreen() {
             </div>
           )}
         </div>
-      </Disclosure>
+      </nav> */}
+
+      <Navigation />
 
       <div className="py-10 flex-1">
         <header>

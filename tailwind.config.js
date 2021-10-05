@@ -34,6 +34,10 @@ module.exports = {
       },
     },
   },
-  variants: {},
+  variants: {
+    extend: {
+      textColor: ["group-focus"],
+    },
+  },
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/aspect-ratio")],
 };
