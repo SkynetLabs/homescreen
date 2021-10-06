@@ -7,6 +7,7 @@ const SKYLINK_BASE_32_MATCHER = /^(sia:\/\/)?(?<skylink>[a-z0-9_-]{55})(\/.*)?/;
 const HNS_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.hns/;
 const ETH_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.eth/;
 const IPFS_CID_MATCHER = /^\/?ipfs(:\/)?\/(?<cid>[a-zA-Z0-9_-]{46,})/;
+const IPNS_MATCHER = /^\/?(ipns(:\/)?\/)?(?<name>[^/]+)/;
 const SKYLINK_DNSLINK_MATCHER = /dnslink=\/skynet-ns\/(?<skylink>[a-zA-Z0-9_-]{46,})/;
 const IPFS_DNSLINK_MATCHER = /dnslink=\/ipfs\/(?<cid>[a-zA-Z0-9_-]{46,})/;
 const IPNS_DNSLINK_MATCHER = /dnslink=\/ipns\/(?<name>.+)/;
@@ -91,6 +92,17 @@ export default async function searchSkylink(input) {
     const skylink = await requestSkylink(address);
 
     if (skylink) return skylink;
+  }
+
+  if (input.match(IPNS_MATCHER)) {
+    try {
+      const { groups } = input.match(IPNS_MATCHER);
+      const response = await ky.post(`${ipfsApi}/api/v0/name/resolve?arg=${groups.name}`).json();
+      const matchIpfsCid = response.Path.match(IPFS_CID_MATCHER);
+      return migrateIpfsToSkylink(matchIpfsCid.groups.cid);
+    } catch {
+      // do nothing
+    }
   }
 
   if (input.match(IPFS_CID_MATCHER)) {
