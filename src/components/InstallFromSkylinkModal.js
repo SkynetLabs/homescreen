@@ -100,6 +100,7 @@ export default function InstallFromSkylinkModal() {
           if (metadata.description) data.metadata.description = metadata.description;
           if (metadata.themeColor) data.metadata.themeColor = metadata.themeColor;
           if (metadata.icon) data.metadata.icon = metadata.icon;
+          if (metadata.manifestPath) data.manifestPath = metadata.manifestPath;
 
           // if resolved skylink is included in metadata then use it
           if (metadata.skylink && isSkylinkV2(metadata.skylink)) data.resolverSkylink = metadata.skylink;

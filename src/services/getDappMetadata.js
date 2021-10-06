@@ -71,7 +71,7 @@ export default async function getDappMetadata(skylink) {
     const parsedMetadata = await parseMetadata(responseText, doc, skylinkUrl);
 
     // combine results from parsers, with Manifest taking priority
-    return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, skylink, ...parsedManifest };
+    return { ...emptyManifest, ...skynetMetadata, ...parsedMetadata, skylink, manifestPath, ...parsedManifest };
   } catch (error) {
     console.error(error.message);
 
