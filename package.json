@@ -35,7 +35,7 @@
     "react-use": "^17.3.1",
     "skynet-js": "^4.0.17-beta",
     "spinkit": "^2.0.1",
-    "web-vitals": "^2.1.0",
+    "web-vitals": "^2.1.1",
     "yup": "^0.32.9"
   },
   "devDependencies": {
