@@ -1,6 +1,5 @@
 import * as React from "react";
 import skynetClient from "../services/skynetClient";
-import { Permission, PermCategory, PermType } from "skynet-js";
 
 export const dataDomain = "homescreen.hns";
 export const AuthContext = React.createContext();
@@ -19,13 +18,6 @@ export default function SkynetContextProvider({ children }) {
 
       // initialize MySky
       const mySky = await skynetClient.loadMySky(dataDomain);
-
-      // Grab current domain for requesting permissions
-      const currentDomain = await skynetClient.extractDomain(window.location.href);
-
-      // Request Discoverable Write permissions
-      // This is in addition to Hidden Read and Write requested through initializing with the dataDomain
-      await mySky.addPermissions(new Permission(currentDomain, dataDomain, PermCategory.Discoverable, PermType.Write));
 
       try {
         const isAuthenticated = await mySky.checkLogin();
