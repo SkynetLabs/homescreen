@@ -8,8 +8,10 @@ import { ExclamationIcon } from "@heroicons/react/outline";
 import skynetClient from "../services/skynetClient";
 import DappCard from "./DappCard";
 import Link from "./Link";
+import MySkyButton from "../components/MySkyButton";
 import getDappMetadata from "../services/getDappMetadata";
 import { StorageContext } from "../state/StorageContext";
+import { AuthContext } from "../state/AuthContext";
 import { ReactComponent as Cog } from "../svg/Cog.svg";
 import { find, mergeWith } from "lodash-es";
 
@@ -24,6 +26,7 @@ export default function InstallFromSkylinkModal() {
   const history = useHistory();
   const [dappData, setDappData] = useState(null);
   const [open, setOpen] = useState(true);
+  const { user } = React.useContext(AuthContext);
   const { isStorageProcessing, updateDapp, dapps } = React.useContext(StorageContext);
   const [processing, setProcessing] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -226,28 +229,32 @@ export default function InstallFromSkylinkModal() {
               <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
                 <button
                   type="button"
-                  className="hover:bg-palette-100 w-full inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:text-sm"
+                  className="hover:bg-palette-100 flex-1 inline-flex justify-center rounded-md border border-palette-300 shadow-sm px-4 py-2 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   onClick={handleClose}
                   ref={closeButtonRef}
                 >
                   Cancel
                 </button>
 
-                <button
-                  type="button"
-                  className={classNames(
-                    "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2 sm:text-sm",
-                    {
-                      "bg-primary hover:bg-primary-light": !isConfirmDisabled,
-                      "border border-palette-200 bg-palette-100 cursor-auto text-palette-200": isConfirmDisabled,
-                    }
-                  )}
-                  onClick={handleConfirm}
-                  disabled={isConfirmDisabled}
-                  ref={acceptButtonRef}
-                >
-                  {isProcessing ? "Please wait" : isUpdateRequest ? "Update" : "Add to Homescreen"}
-                </button>
+                {user ? (
+                  <button
+                    type="button"
+                    className={classNames(
+                      "inline-flex flex-1 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:col-start-2",
+                      {
+                        "bg-primary hover:bg-primary-light": !isConfirmDisabled,
+                        "border border-palette-200 bg-palette-100 cursor-auto text-palette-200": isConfirmDisabled,
+                      }
+                    )}
+                    onClick={handleConfirm}
+                    disabled={isConfirmDisabled}
+                    ref={acceptButtonRef}
+                  >
+                    {isProcessing ? "Please wait" : isUpdateRequest ? "Update" : "Add to Homescreen"}
+                  </button>
+                ) : (
+                  <MySkyButton />
+                )}
               </div>
             </div>
           </Transition.Child>

@@ -161,13 +161,11 @@ export default function Homescreen() {
         </div>
       </footer>
 
-      {user && (
-        <Switch>
-          <Route path="/skylink/:skylink?">
-            <InstallFromSkylinkModal />
-          </Route>
-        </Switch>
-      )}
+      <Switch>
+        <Route path="/skylink/:skylink?">
+          <InstallFromSkylinkModal />
+        </Route>
+      </Switch>
 
       <DappDetails />
     </div>
