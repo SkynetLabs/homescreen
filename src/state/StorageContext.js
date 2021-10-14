@@ -9,7 +9,7 @@ export const StorageContext = React.createContext();
 // const consistencyException = new Error("Storage is already processing a request, you can retry once it's finished");
 const storageConsistencyMessage = "Storage is already processing a request, you can retry once it's finished";
 const signUpMessage =
-  "Thank you for signing up! We have seeded your Homescreen with couple of apps that might get you started, feel free to manage them in any way you want - this is your personal space.";
+  "Thank you for signing up! We have seeded your Homescreen with a couple of apps that might get you started, feel free to manage them in any way you want - this is your personal space.";
 
 const initialState = {
   isStorageInitialised: false,
