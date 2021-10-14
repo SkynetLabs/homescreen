@@ -8,6 +8,8 @@ export const StorageContext = React.createContext();
 
 // const consistencyException = new Error("Storage is already processing a request, you can retry once it's finished");
 const storageConsistencyMessage = "Storage is already processing a request, you can retry once it's finished";
+const signUpMessage =
+  "Thank you for signing up! We have seeded your Homescreen with a couple of apps that might get you started, feel free to manage them in any way you want - this is your personal space.";
 
 const initialState = {
   isStorageInitialised: false,
@@ -83,28 +85,29 @@ export default function StorageContextProvider({ children }) {
         setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.elements }));
       } else {
         // seed the storage with default apps
+
+        setState((state) => ({ ...state, isStorageProcessing: true }));
+
         const data = schema.current.Schema.cast({ elements: defaultDapps });
+        const dapps = data.elements;
 
         await mySky.setJSON(`${dataDomain}/dapps`, data);
 
-        setState((state) => ({ ...state, isStorageInitialised: true, dapps: data.elements }));
+        setState((state) => ({ ...state, isStorageInitialised: true, isStorageProcessing: false, dapps }));
 
-        toast.info(
-          "Thank you for signing up! We have seeded your Homescreen with couple of apps that might get you started, feel free to manage them in any way you want - this is your personal space.",
-          {
-            autoClose: 60000,
-            hideProgressBar: true,
-            progress: undefined,
-            position: "top-center",
-            className: "bg-blue-100",
-          }
-        );
+        toast.info(signUpMessage, {
+          autoClose: 60000,
+          hideProgressBar: true,
+          progress: undefined,
+          position: "top-center",
+          className: "bg-blue-100",
+        });
       }
     } catch (error) {
       console.log(error.message);
 
       // server error or invalid schema
-      setState((state) => ({ ...state, isStorageInitialised: true, dapps: [] }));
+      setState((state) => ({ ...state, isStorageInitialised: true, isStorageProcessing: false, dapps: [] }));
     }
   }, [mySky, setState]);
 
