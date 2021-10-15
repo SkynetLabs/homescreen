@@ -36,7 +36,7 @@
     "skynet-js": "^4.0.17-beta",
     "spinkit": "^2.0.1",
     "web-vitals": "^2.1.2",
-    "yup": "^0.32.9"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.2",
