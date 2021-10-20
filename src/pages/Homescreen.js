@@ -11,6 +11,7 @@ import Spinner from "../components/Spinner";
 import Link from "../components/Link";
 import FeatureSection from "../components/FeatureSection";
 import HeaderSection from "../components/HeaderSection";
+import NewsHeader from "../components/NewsHeader";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
@@ -39,6 +40,7 @@ export default function Homescreen() {
     <div className="min-h-screen flex flex-col">
       <Disclosure as="nav" className="bg-white border-b border-palette-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <NewsHeader />
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
