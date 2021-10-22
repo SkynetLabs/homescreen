@@ -41,7 +41,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.2",
     "cross-env": "^7.0.2",
-    "husky": "^7.0.1",
+    "husky": "^7.0.4",
     "jest-fetch-mock": "^3.0.3",
     "lint-staged": "^11.2.3",
     "postcss": "^8.3.9",
