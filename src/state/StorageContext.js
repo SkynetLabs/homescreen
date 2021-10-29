@@ -94,14 +94,28 @@ export default function StorageContextProvider({ children }) {
         await mySky.setJSON(`${dataDomain}/dapps`, data);
 
         setState((state) => ({ ...state, isStorageInitialised: true, isStorageProcessing: false, dapps }));
-
-        toast.info(signUpMessage, {
-          autoClose: 60000,
-          hideProgressBar: true,
-          progress: undefined,
-          position: "top-center",
-          className: "bg-blue-100",
-        });
+        // if an element with the no-signupmessage class exists then we won't show the toast for now
+        if (document.getElementsByClassName("no-signupmessage").length) {
+          // save it as a welcome function to be called later
+          window["welcome"] = function () {
+            toast.info(signUpMessage, {
+              autoClose: 60000,
+              hideProgressBar: true,
+              progress: undefined,
+              position: "top-center",
+              className: "bg-blue-100",
+            });
+            window["welcome"] = () => {};
+          };
+        } else {
+          toast.info(signUpMessage, {
+            autoClose: 60000,
+            hideProgressBar: true,
+            progress: undefined,
+            position: "top-center",
+            className: "bg-blue-100",
+          });
+        }
       }
     } catch (error) {
       console.log(error.message);

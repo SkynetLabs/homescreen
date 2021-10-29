@@ -68,6 +68,10 @@ export default function InstallFromSkylinkModal() {
   };
 
   const handleClose = (force = false) => {
+    // show the welcome message
+    if (window["welcome"]) {
+      window["welcome"]();
+    }
     if (processing) {
       if (force) setProcessing(false);
       else return;
@@ -155,7 +159,7 @@ export default function InstallFromSkylinkModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div className="no-signupmessage inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
               <div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium">
