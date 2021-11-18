@@ -128,7 +128,7 @@ export default function DappOptions({ dapp }) {
           >
             <Menu.Items
               static
-              className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-palette-100 focus:outline-none"
+              className="origin-top-right absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-palette-100 focus:outline-none"
             >
               <div className="py-1">
                 {actions
