@@ -11,7 +11,7 @@ import Spinner from "../components/Spinner";
 import Link from "../components/Link";
 import FeatureSection from "../components/FeatureSection";
 import HeaderSection from "../components/HeaderSection";
-// import NewsHeader from "../components/NewsHeader";
+import NewsHeader from "../components/NewsHeader";
 import InstallFromSkylink from "../components/InstallFromSkylink";
 import InstallFromSkylinkModal from "../components/InstallFromSkylinkModal";
 import { ReactComponent as ExternalLink } from "../svg/ExternalLink.svg";
@@ -37,18 +37,18 @@ export default function Homescreen() {
   const others = React.useMemo(() => dapps.filter(({ favorite }) => !favorite), [dapps]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Disclosure as="nav" className="bg-white border-b border-palette-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <NewsHeader /> */}
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <NewsHeader />
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <img className="block lg:hidden h-8 w-auto" src="/logo/skynet.svg" alt="Workflow" />
-                <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
+              <div className="flex items-center flex-shrink-0">
+                <img className="block w-auto h-8 lg:hidden" src="/logo/skynet.svg" alt="Workflow" />
+                <img className="hidden w-auto h-8 lg:block" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
               </div>
             </div>
-            <div className="flex items-center space-x-4 flex-1 justify-end">
+            <div className="flex items-center justify-end flex-1 space-x-4">
               {user && (
                 <div className="hidden sm:flex sm:flex-1">
                   <InstallFromSkylink />
@@ -65,9 +65,9 @@ export default function Homescreen() {
         </div>
       </Disclosure>
 
-      <div className="py-10 flex-1">
+      <div className="flex-1 py-10">
         <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end sm:justify-between items-center">
+          <div className="flex items-center justify-end px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:justify-between">
             <h1
               className={classNames(
                 "mt-1 text-xl font-extrabold text-palette-600 sm:text-2xl sm:tracking-tight lg:text-3xl hidden sm:block",
@@ -77,40 +77,40 @@ export default function Homescreen() {
               Your Homescreen
             </h1>
 
-            <div className="flex flex-col text-right space-y-1">
+            <div className="flex flex-col space-y-1 text-right">
               <Link
                 href="https://support.siasky.net/key-concepts/homescreen"
-                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
+                className="inline-flex items-center justify-end text-xs transition-colors text-palette-400 hover:text-primary"
               >
-                Documentation and FAQ <ExternalLink className="fill-current inline-block" height={18} />
+                Documentation and FAQ <ExternalLink className="inline-block fill-current" height={18} />
               </Link>
               <Link
                 href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app"
-                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
+                className="inline-flex items-center justify-end text-xs transition-colors text-palette-400 hover:text-primary"
               >
-                Add Homescreen Support to Your App <ExternalLink className="fill-current inline-block" height={18} />
+                Add Homescreen Support to Your App <ExternalLink className="inline-block fill-current" height={18} />
               </Link>
               <Link
                 href="https://github.com/SkynetLabs/awesome-homescreen"
-                className="text-xs text-palette-400 hover:text-primary transition-colors inline-flex items-center justify-end"
+                className="inline-flex items-center justify-end text-xs transition-colors text-palette-400 hover:text-primary"
               >
-                Discover Homescreen Apps <ExternalLink className="fill-current inline-block" height={18} />
+                Discover Homescreen Apps <ExternalLink className="inline-block fill-current" height={18} />
               </Link>
             </div>
           </div>
         </header>
         <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
             {showDappsSection && (
-              <div className="px-4 py-8 sm:px-0 space-y-12">
+              <div className="px-4 py-8 space-y-12 sm:px-0">
                 {favorites.length > 0 && <DappGrid title="Favorite Dapps" dapps={favorites} />}
                 {others.length > 0 && <DappGrid title="All Dapps" dapps={others} />}
               </div>
             )}
 
             {showEmptyDappsSection && (
-              <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-                <h2 className="text-xl font-semibold sm:text-2xl space-y-2">
+              <div className="max-w-2xl px-4 py-16 mx-auto text-center sm:py-20 sm:px-6 lg:px-8">
+                <h2 className="space-y-2 text-xl font-semibold sm:text-2xl">
                   <span className="block">Welcome stranger!</span>
                   <span className="block text-primary">
                     This is your personal Skynet <span className="underline">Homescreen</span>.
@@ -133,7 +133,7 @@ export default function Homescreen() {
             )}
 
             {showInitialisingSpinner && (
-              <div className="px-4 py-32 sm:px-0 space-y-6 text-center">
+              <div className="px-4 py-32 space-y-6 text-center sm:px-0">
                 <Spinner />
                 <p className="text-palette-500">Initialising Your Homescreen</p>
               </div>
@@ -141,16 +141,16 @@ export default function Homescreen() {
           </div>
         </main>
       </div>
-      <footer className="m-6 text-center text-sm leading-5 text-palette-200">
+      <footer className="m-6 text-sm leading-5 text-center text-palette-200">
         <div className="inline-flex items-center">
           Open Source
           <a
-            className="hover:underline inline-flex items-center ml-2"
+            className="inline-flex items-center ml-2 hover:underline"
             href="https://github.com/skynetlabs/homescreen"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Github height="12" className="inline-block fill-current mr-1" /> GitHub
+            <Github height="12" className="inline-block mr-1 fill-current" /> GitHub
           </a>
           {process.env.REACT_APP_GIT_SHA && (
             <a

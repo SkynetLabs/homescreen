@@ -1,20 +1,30 @@
 import * as React from "react";
 import { ReactComponent as ArrowRight } from "../svg/ArrowRight.svg";
+import Link from "./Link";
 
 const NewsHeader = () => {
   return (
-    <div className="py-3 max-w-layout mx-auto text-center">
+    <div className="py-3 mx-auto text-center max-w-layout">
       <a
-        href="https://www.eventbrite.com/e/ethlisbon-homescreen-event-tickets-192721594477"
+        href="https://blog.sia.tech/1inch-integrates-with-homescreen-8146f7971aad"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-palette-500 font-content leading-8 inline-flex items-center overflow-hidden text-base hover:text-primary transition-colors duration-200"
+        className="inline-flex items-center overflow-hidden text-base leading-8 transition-colors duration-200 text-palette-500 font-content hover:text-primary"
       >
-        <ArrowRight className="mr-2 flex-shrink-0 fill-current text-primary" />
-        <span className="hidden sm:inline">Meet us at EthLisbon Homescreen Launch Event on Oct 21st</span>
-        <span className="sm:hidden">EthLisbon Homescreen Launch Event on Oct 21st</span>
-        <span className="ml-3">🎉🎉🎉</span>
+        <span className="">🎉</span>
+        <span className="">1inch integrates with Homescreen</span>
+        <span className="">🎉</span>
       </a>
+      <span className="mx-3">{" | "}</span>
+      <Link
+        to="/skylink/AQBbKr6XcwHWB3GGKTcn07Wk2wbezb-OFZIqyMUwMSC-qg"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center overflow-hidden text-base leading-8 transition-colors duration-200 text-palette-500 font-content hover:text-primary"
+      >
+        <span className="">Add 1inch to Homescreen</span>
+        <ArrowRight className="flex-shrink-0 mr-2 fill-current text-primary" />
+      </Link>
     </div>
   );
 };
