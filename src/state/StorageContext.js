@@ -80,7 +80,7 @@ export default function StorageContextProvider({ children }) {
   const { mySky, user } = React.useContext(AuthContext);
   const [state, setState] = React.useState(initialState);
   const { dapps, isStorageProcessing, isStorageInitialised } = state;
-  const preventParallelStorageAccess = isStorageProcessing || isStorageInitialised;
+  const preventParallelStorageAccess = isStorageProcessing || !isStorageInitialised;
 
   const refreshStorage = React.useCallback(async () => {
     try {
