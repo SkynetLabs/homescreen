@@ -19,26 +19,14 @@ const initialState = {
 
 const defaultDapps = [
   {
-    resolverSkylink: "AQBLTOv9uMFcNR_NRooBc6Rv7jb4it1cozkWEApU3roLEQ",
-    skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA",
-    skylinks: [{ skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA" }],
+    resolverSkylink: "AQBbKr6XcwHWB3GGKTcn07Wk2wbezb-OFZIqyMUwMSC-qg",
+    skylink: "HAAaF0t_wKIFIfT4n_6hkmbki89thWhNgv3QA5yFBUQHQA",
+    skylinks: [{ skylink: "HAAaF0t_wKIFIfT4n_6hkmbki89thWhNgv3QA5yFBUQHQA" }],
     metadata: {
-      name: "Rift",
-      description: "Your decentralized workspace",
-      themeColor: "#ffffff",
-      icon: "/android-chrome-192x192.png",
-    },
-  },
-  {
-    resolverSkylink: "AQDn5uriOXZFLumP0QhJUO7D3kPkJ2SPciJCiShDnXb1Dw",
-    skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg",
-    skylinks: [{ skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg" }],
-    metadata: {
-      name: "Hacker Paste",
-      description:
-        "Hacker Paste lets you share encrypted text and code snippets through Skynet, a decentralized content delivery network.",
-      themeColor: "#ffffff",
-      icon: "/static/android-chrome-192x192.png",
+      name: "1inch",
+      description: "DeFi / DEX aggregator on Ethereum, Binance Smart Chain, Optimism, Polygon, Arbitrum",
+      themeColor: "#1976d2",
+      icon: "/assets/icons/icon-72x72.png",
     },
   },
   {
@@ -63,6 +51,29 @@ const defaultDapps = [
       icon: "/resources/icon/android-chrome-192x192.png",
     },
   },
+  {
+    resolverSkylink: "AQBLTOv9uMFcNR_NRooBc6Rv7jb4it1cozkWEApU3roLEQ",
+    skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA",
+    skylinks: [{ skylink: "EABFLP0a9mYcPaRIhuTj9kqp0p-5vwmr1gWtXOVWBNORwA" }],
+    metadata: {
+      name: "Rift",
+      description: "Your decentralized workspace",
+      themeColor: "#ffffff",
+      icon: "/android-chrome-192x192.png",
+    },
+  },
+  // {
+  //   resolverSkylink: "AQDn5uriOXZFLumP0QhJUO7D3kPkJ2SPciJCiShDnXb1Dw",
+  //   skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg",
+  //   skylinks: [{ skylink: "_AFA8eHudO8vU10GdgSjvX_40P2gXJsIq5jZY2VoBiVQmg" }],
+  //   metadata: {
+  //     name: "Hacker Paste",
+  //     description:
+  //       "Hacker Paste lets you share encrypted text and code snippets through Skynet, a decentralized content delivery network.",
+  //     themeColor: "#ffffff",
+  //     icon: "/static/android-chrome-192x192.png",
+  //   },
+  // },
 ];
 
 export default function StorageContextProvider({ children }) {
