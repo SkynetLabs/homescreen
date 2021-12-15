@@ -79,7 +79,8 @@ const defaultDapps = [
 export default function StorageContextProvider({ children }) {
   const { mySky, user } = React.useContext(AuthContext);
   const [state, setState] = React.useState(initialState);
-  const { dapps, isStorageProcessing } = state;
+  const { dapps, isStorageProcessing, isStorageInitialised } = state;
+  const preventParallelStorageAccess = isStorageProcessing || !isStorageInitialised;
 
   const refreshStorage = React.useCallback(async () => {
     try {
@@ -141,7 +142,7 @@ export default function StorageContextProvider({ children }) {
 
   const removeDapp = React.useCallback(
     async (id) => {
-      if (isStorageProcessing) {
+      if (preventParallelStorageAccess) {
         toast.error(storageConsistencyMessage);
         return;
       }
@@ -152,12 +153,12 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, dapps, persistStorage]
+    [preventParallelStorageAccess, dapps, persistStorage]
   );
 
   const updateDapp = React.useCallback(
     async (data) => {
-      if (isStorageProcessing) {
+      if (preventParallelStorageAccess) {
         toast.error(storageConsistencyMessage);
         return;
       }
@@ -182,7 +183,7 @@ export default function StorageContextProvider({ children }) {
 
       setState((state) => ({ ...state, isStorageProcessing: false }));
     },
-    [isStorageProcessing, dapps, persistStorage]
+    [preventParallelStorageAccess, dapps, persistStorage]
   );
 
   const storageContext = React.useMemo(() => {
