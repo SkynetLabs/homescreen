@@ -12,7 +12,7 @@
     "@tailwindcss/aspect-ratio": "^0.3.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.4.1",
+    "@testing-library/user-event": "^13.5.0",
     "classnames": "^2.3.1",
     "clipboardy": "^2.3.0",
     "css-what": "^5.1.0",
