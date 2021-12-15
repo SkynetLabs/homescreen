@@ -43,10 +43,12 @@ export default function Homescreen() {
           <NewsHeader />
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
-              <div className="flex items-center flex-shrink-0">
-                <img className="block w-auto h-8 lg:hidden" src="/logo/skynet.svg" alt="Workflow" />
-                <img className="hidden w-auto h-8 lg:block" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
-              </div>
+
+              <Link href="https://siasky.net" className="flex-shrink-0 flex items-center">
+                <img className="block lg:hidden h-8 w-auto" src="/logo/skynet.svg" alt="Workflow" />
+                <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
+              </Link>
+    
             </div>
             <div className="flex items-center justify-end flex-1 space-x-4">
               {user && (
