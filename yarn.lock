@@ -1244,10 +1244,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/source-code-pro/-/source-code-pro-4.5.0.tgz#0dabcefeb7ff0ded884f1113a86473eebe5aac95"
   integrity sha512-IKB+oQfwjj9DzEM2sc5rO70BZV7+ksmZbB+1KzyiZp2VroPw7Lm1ovXBU2JYWIWXmNY+gDudvyZXZHE+6cG47Q==
 
-"@fontsource/source-sans-pro@^4.2.2":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@fontsource/source-sans-pro/-/source-sans-pro-4.5.0.tgz#19726a3c609f9450bfc53811b8497d4684ff2111"
-  integrity sha512-+ze+nO9dVN5pAVg9CdQmVgR6f8kDpq/elHMGcyx3qsW4+TN4mI7EuMdNzKP3E1xeZwTHSmHY5bezpfFHX7bQsg==
+"@fontsource/source-sans-pro@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@fontsource/source-sans-pro/-/source-sans-pro-4.5.1.tgz#9c4f2b6061d38cd85e89fde21893e23b8a7f227c"
+  integrity sha512-JYEldSfnqxoDVUL6QgqT8Fiyjh0p7WlKcqKNevzDylpWabdejVRyFzPhTk2ZceKZd02KEOaL+K462U6u0/PQiA==
 
 "@gar/promisify@^1.0.1":
   version "1.1.2"

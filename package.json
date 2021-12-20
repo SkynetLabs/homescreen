@@ -5,7 +5,7 @@
   "dependencies": {
     "@fontsource/sora": "^4.2.2",
     "@fontsource/source-code-pro": "^4.2.3",
-    "@fontsource/source-sans-pro": "^4.2.2",
+    "@fontsource/source-sans-pro": "^4.5.1",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.3",
     "@octokit/core": "^3.5.1",
