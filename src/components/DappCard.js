@@ -48,7 +48,7 @@ export default function DappCard({ dapp, actions = true }) {
           {dapp.addedOn && (
             <p className="text-palette-300 text-xs flex items-center flex-row truncate">
               <ClockIcon className="w-4 inline-flex mr-1 flex-shrink-0" />{" "}
-              {dapp.skylinks.length > 1 ? "updated" : "installed"}
+              {dapp.skylinks.length > 1 ? "updated" : "installed"}{" "}
               <RelativeDate date={dapp.skylinks[dapp.skylinks.length - 1].addedOn} />
             </p>
           )}
