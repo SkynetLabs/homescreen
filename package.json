@@ -6,7 +6,7 @@
     "@fontsource/sora": "^4.2.2",
     "@fontsource/source-code-pro": "^4.5.1",
     "@fontsource/source-sans-pro": "^4.5.1",
-    "@headlessui/react": "^1.4.0",
+    "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.3",
     "@octokit/core": "^3.5.1",
     "@tailwindcss/aspect-ratio": "^0.4.0",
