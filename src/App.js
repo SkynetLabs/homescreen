@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Homescreen from "./pages/Homescreen";
 import AuthContextProvider from "./state/AuthContext";
@@ -13,11 +13,9 @@ export default function App() {
         <AuthContextProvider>
           <StorageContextProvider>
             <StateContextProvider>
-              <Switch>
-                <Route path="/">
-                  <Homescreen />
-                </Route>
-              </Switch>
+              <Routes>
+                <Route path="*" element={<Homescreen />} />
+              </Routes>
             </StateContextProvider>
           </StorageContextProvider>
         </AuthContextProvider>

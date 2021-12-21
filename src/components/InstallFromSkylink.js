@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import searchSkylink from "../services/searchSkylink";
@@ -8,7 +8,7 @@ import { SearchIcon, CogIcon } from "@heroicons/react/outline";
 export default function InstallFromSkylink() {
   const [skylink, setSkylink] = React.useState("");
   const [processing, setProcessing] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,7 +19,7 @@ export default function InstallFromSkylink() {
       const parsed = await searchSkylink(skylink);
 
       if (parsed) {
-        history.push(`/skylink/${parsed}`);
+        navigate(`/skylink/${parsed}`);
 
         setSkylink("");
       } else {

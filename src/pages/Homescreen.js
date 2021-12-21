@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Disclosure } from "@headlessui/react";
 import classNames from "classnames";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { AuthContext } from "../state/AuthContext";
 import { StorageContext } from "../state/StorageContext";
 import DappGrid from "../components/DappGrid";
@@ -43,12 +43,10 @@ export default function Homescreen() {
           <NewsHeader />
           <div className="flex justify-between h-16 space-x-4">
             <div className="flex">
-
               <Link href="https://siasky.net" className="flex-shrink-0 flex items-center">
                 <img className="block lg:hidden h-8 w-auto" src="/logo/skynet.svg" alt="Workflow" />
                 <img className="hidden lg:block h-8 w-auto" src="/logo/skynet-with-wordmark.svg" alt="Workflow" />
               </Link>
-    
             </div>
             <div className="flex items-center justify-end flex-1 space-x-4">
               {user && (
@@ -165,11 +163,9 @@ export default function Homescreen() {
         </div>
       </footer>
 
-      <Switch>
-        <Route path="/skylink/:skylink?">
-          <InstallFromSkylinkModal />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="/skylink/:skylink" element={<InstallFromSkylinkModal />} />
+      </Routes>
 
       <DappDetails />
     </div>

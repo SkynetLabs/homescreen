@@ -1,5 +1,5 @@
 import React, { Fragment, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { isSkylinkV2, parseSkylink } from "skynet-js";
 import { Dialog, Transition, Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
@@ -23,7 +23,7 @@ function mergeCustomizer(objValue, srcValue) {
 
 export default function InstallFromSkylinkModal() {
   const { skylink } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [dappData, setDappData] = useState(null);
   const [open, setOpen] = useState(true);
   const { user } = React.useContext(AuthContext);
@@ -74,48 +74,44 @@ export default function InstallFromSkylinkModal() {
     }
 
     setOpen(false);
-    history.replace("/");
+    navigate("/", { replace: true });
   };
 
   React.useEffect(() => {
     (async () => {
-      if (skylink) {
-        const validSkylink = parseSkylink(skylink);
+      const validSkylink = parseSkylink(skylink);
 
-        if (!validSkylink) {
-          return setError("Your skylink is invalid!");
-        }
-
-        setProcessing(true);
-
-        const data = { skylink };
-
-        if (isSkylinkV2(validSkylink)) {
-          data.resolverSkylink = validSkylink;
-          data.skylink = await getResolvedSkylink(validSkylink);
-        }
-
-        try {
-          const metadata = await getDappMetadata(data.skylink);
-
-          data.metadata = {};
-          if (metadata.name) data.metadata.name = metadata.name;
-          if (metadata.description) data.metadata.description = metadata.description;
-          if (metadata.themeColor) data.metadata.themeColor = metadata.themeColor;
-          if (metadata.icon) data.metadata.icon = metadata.icon;
-          if (metadata.manifestPath) data.manifestPath = metadata.manifestPath;
-
-          // if resolved skylink is included in metadata then use it
-          if (metadata.skylink && isSkylinkV2(metadata.skylink)) data.resolverSkylink = metadata.skylink;
-        } catch (error) {
-          // couldn't fetch metadata - ignore it
-        }
-
-        setProcessing(false);
-        setDappData(data);
-      } else {
-        setDappData(null);
+      if (!validSkylink) {
+        return setError("Your skylink is invalid!");
       }
+
+      setProcessing(true);
+
+      const data = { skylink };
+
+      if (isSkylinkV2(validSkylink)) {
+        data.resolverSkylink = validSkylink;
+        data.skylink = await getResolvedSkylink(validSkylink);
+      }
+
+      try {
+        const metadata = await getDappMetadata(data.skylink);
+
+        data.metadata = {};
+        if (metadata.name) data.metadata.name = metadata.name;
+        if (metadata.description) data.metadata.description = metadata.description;
+        if (metadata.themeColor) data.metadata.themeColor = metadata.themeColor;
+        if (metadata.icon) data.metadata.icon = metadata.icon;
+        if (metadata.manifestPath) data.manifestPath = metadata.manifestPath;
+
+        // if resolved skylink is included in metadata then use it
+        if (metadata.skylink && isSkylinkV2(metadata.skylink)) data.resolverSkylink = metadata.skylink;
+      } catch (error) {
+        // couldn't fetch metadata - ignore it
+      }
+
+      setProcessing(false);
+      setDappData(data);
     })();
   }, [skylink]);
 
@@ -161,68 +157,67 @@ export default function InstallFromSkylinkModal() {
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium">
                     Save to Homescreen
                   </Dialog.Title>
-                  {skylink && (
-                    <div className="mt-4 text-sm space-y-4 text-palette-400">
-                      {dappData ? (
-                        <>
-                          <DappCard dapp={dappData} actions={false} />
-                          <Disclosure>
-                            {({ open }) => (
-                              <>
-                                {!open && (
-                                  <Disclosure.Button className="text-xs text-underline">
-                                    show extended skylink details
-                                  </Disclosure.Button>
-                                )}
-                                <Transition
-                                  show={open}
-                                  enter="transition duration-100 ease-out"
-                                  enterFrom="transform scale-95 opacity-0"
-                                  enterTo="transform scale-100 opacity-100"
-                                  leave="transition duration-75 ease-out"
-                                  leaveFrom="transform scale-100 opacity-100"
-                                  leaveTo="transform scale-95 opacity-0"
-                                >
-                                  <Disclosure.Panel static>
-                                    {dappData && (
-                                      <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
-                                        {JSON.stringify(dappData, null, 2)}
-                                      </pre>
-                                    )}
-                                  </Disclosure.Panel>
-                                </Transition>
-                              </>
-                            )}
-                          </Disclosure>
-                        </>
-                      ) : (
-                        <span className="flex items-center justify-center">
-                          <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading dapp
-                          metadata, please wait
-                        </span>
-                      )}
 
-                      {dappData && !dappData.metadata.icon && !processing && (
-                        <p className="text-orange-500 inline-flex items-center space-x-2">
-                          <ExclamationIcon className="w-4 h-4 mr-2" /> manifest is missing or misconfigured:
-                          <Link
-                            href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app#3-configure-your-manifest-file"
-                            className="text-orange-500 hover:text-orange-600 inline-flex items-center"
-                          >
-                            read more
-                          </Link>
-                        </p>
-                      )}
+                  <div className="mt-4 text-sm space-y-4 text-palette-400">
+                    {dappData ? (
+                      <>
+                        <DappCard dapp={dappData} actions={false} />
+                        <Disclosure>
+                          {({ open }) => (
+                            <>
+                              {!open && (
+                                <Disclosure.Button className="text-xs text-underline">
+                                  show extended skylink details
+                                </Disclosure.Button>
+                              )}
+                              <Transition
+                                show={open}
+                                enter="transition duration-100 ease-out"
+                                enterFrom="transform scale-95 opacity-0"
+                                enterTo="transform scale-100 opacity-100"
+                                leave="transition duration-75 ease-out"
+                                leaveFrom="transform scale-100 opacity-100"
+                                leaveTo="transform scale-95 opacity-0"
+                              >
+                                <Disclosure.Panel static>
+                                  {dappData && (
+                                    <pre className="text-xs text-left overflow-auto p-2 shadow-sm rounded-md border border-palette-200">
+                                      {JSON.stringify(dappData, null, 2)}
+                                    </pre>
+                                  )}
+                                </Disclosure.Panel>
+                              </Transition>
+                            </>
+                          )}
+                        </Disclosure>
+                      </>
+                    ) : (
+                      <span className="flex items-center justify-center">
+                        <Cog className="mr-2 h-6 w-6 text-palette-600 animate-spin" aria-hidden="true" /> Loading dapp
+                        metadata, please wait
+                      </span>
+                    )}
 
-                      {error && <p className="text-error">{error}</p>}
+                    {dappData && !dappData.metadata.icon && !processing && (
+                      <p className="text-orange-500 inline-flex items-center space-x-2">
+                        <ExclamationIcon className="w-4 h-4 mr-2" /> manifest is missing or misconfigured:
+                        <Link
+                          href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app#3-configure-your-manifest-file"
+                          className="text-orange-500 hover:text-orange-600 inline-flex items-center"
+                        >
+                          read more
+                        </Link>
+                      </p>
+                    )}
 
-                      {isDuplicateRequest && <p>This version of the dapp is already saved to your Homescreen.</p>}
+                    {error && <p className="text-error">{error}</p>}
 
-                      {isUpdateRequest && <p>Another version of this dapp is already on your Homescreen.</p>}
+                    {isDuplicateRequest && <p>This version of the dapp is already saved to your Homescreen.</p>}
 
-                      {isAddNewRequest && <p>This action will pin the skylink and place it on your Homescreen.</p>}
-                    </div>
-                  )}
+                    {isUpdateRequest && <p>Another version of this dapp is already on your Homescreen.</p>}
+
+                    {isAddNewRequest && <p>This action will pin the skylink and place it on your Homescreen.</p>}
+                  </div>
                 </div>
               </div>
 
