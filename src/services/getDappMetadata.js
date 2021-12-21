@@ -1,7 +1,7 @@
 import ky from "ky-universal";
 import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
-import skynetClient from "../services/skynetClient";
+import { skynetClient } from "../services/skynet";
 import prettyBytes from "pretty-bytes";
 import { get } from "lodash-es";
 

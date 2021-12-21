@@ -7,7 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { StorageContext } from "../state/StorageContext";
 import { StateContext } from "../state/StateContext";
-import skynetClient from "../services/skynetClient";
+import { skynetClient } from "../services/skynet";
 import { ClipboardIcon, CloudIcon, HeartIcon, PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 
 const getResolvedSkylink = async (skylink) => {

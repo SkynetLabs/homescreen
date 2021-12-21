@@ -5,7 +5,7 @@ import { Dialog, Transition, Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import classNames from "classnames";
 import { ExclamationIcon } from "@heroicons/react/outline";
-import skynetClient from "../services/skynetClient";
+import { skynetClient } from "../services/skynet";
 import DappCard from "./DappCard";
 import Link from "./Link";
 import MySkyButton from "../components/MySkyButton";

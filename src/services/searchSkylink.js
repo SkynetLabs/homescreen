@@ -1,6 +1,6 @@
 import { parseSkylink, convertSkylinkToBase64 } from "skynet-js";
 import { trim } from "lodash";
-import skynetClient from "./skynetClient";
+import { skynetClient } from "./skynet";
 import ky from "ky-universal";
 
 const SKYLINK_BASE_32_MATCHER = /^(sia:\/\/)?(?<skylink>[a-z0-9_-]{55})(\/.*)?/;

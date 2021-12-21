@@ -2,7 +2,7 @@ import * as React from "react";
 import { ClockIcon } from "@heroicons/react/outline";
 import Link from "../components/Link";
 import DappOptions from "../components/DappOptions";
-import skynetClient from "../services/skynetClient";
+import { skynetClient } from "../services/skynet";
 import RelativeDate from "../components/RelativeDate";
 
 const dappInitials = (dapp) => {

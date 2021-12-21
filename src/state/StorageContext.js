@@ -1,9 +1,9 @@
 import * as React from "react";
 import { toast } from "react-toastify";
 import schema from "../schema";
+import { mySky, dataDomain } from "../services/skynet";
 import { AuthContext } from "./AuthContext";
 
-export const dataDomain = "homescreen.hns";
 export const StorageContext = React.createContext();
 
 // const consistencyException = new Error("Storage is already processing a request, you can retry once it's finished");
@@ -77,7 +77,7 @@ const defaultDapps = [
 ];
 
 export default function StorageContextProvider({ children }) {
-  const { mySky, user } = React.useContext(AuthContext);
+  const { user } = React.useContext(AuthContext);
   const [state, setState] = React.useState(initialState);
   const { dapps, isStorageProcessing, isStorageInitialised } = state;
   const preventParallelStorageAccess = isStorageProcessing || !isStorageInitialised;
