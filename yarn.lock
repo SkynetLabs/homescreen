@@ -1239,10 +1239,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/sora/-/sora-4.5.0.tgz#bfd505c063fbfd77b42b1a8a05025aac52d4ea5f"
   integrity sha512-bXr7HZPHh/dtfcp9UfEIrYhiMzmcsGvooz9kkmxi5iYwuqs4O1YWfkNbbPSMoRH/cucrMtlGUuC9eRbFx4Yn5Q==
 
-"@fontsource/source-code-pro@^4.2.3":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@fontsource/source-code-pro/-/source-code-pro-4.5.0.tgz#0dabcefeb7ff0ded884f1113a86473eebe5aac95"
-  integrity sha512-IKB+oQfwjj9DzEM2sc5rO70BZV7+ksmZbB+1KzyiZp2VroPw7Lm1ovXBU2JYWIWXmNY+gDudvyZXZHE+6cG47Q==
+"@fontsource/source-code-pro@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@fontsource/source-code-pro/-/source-code-pro-4.5.1.tgz#7be223bf73e489330e5ad97de430251cda4ff0fb"
+  integrity sha512-NVTR9MBd5Dkzd6JDolLft0KM92RISbw0rhNKUuywGMxovAD7LypE5Cb4u0+lAylV3tRzQkLAsspCwMLzclscdQ==
 
 "@fontsource/source-sans-pro@^4.5.1":
   version "4.5.1"
