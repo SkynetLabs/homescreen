@@ -1,5 +1,4 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
-const { orange } = require("tailwindcss/colors");
 
 const colors = {
   primary: { light: "#33D17E", DEFAULT: "#00c65e" },
@@ -16,8 +15,7 @@ const colors = {
 };
 
 module.exports = {
-  purge: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: false, // or 'media' or 'class'
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     backgroundColor: (theme) => ({ ...theme("colors"), ...colors }),
     borderColor: (theme) => ({ ...theme("colors"), ...colors }),
@@ -29,11 +27,7 @@ module.exports = {
         content: ["Source\\ Sans\\ Pro", ...defaultTheme.fontFamily.sans],
         mono: ["Source\\ Code\\ Pro", ...defaultTheme.fontFamily.mono],
       },
-      colors: {
-        orange,
-      },
     },
   },
-  variants: {},
   plugins: [require("@tailwindcss/forms"), require("@tailwindcss/aspect-ratio")],
 };
