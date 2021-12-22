@@ -2,7 +2,7 @@ import * as React from "react";
 import classNames from "classnames";
 import { toast } from "react-toastify";
 import * as clipboardy from "clipboardy";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { StorageContext } from "../state/StorageContext";
@@ -20,7 +20,7 @@ const getResolvedSkylink = async (skylink) => {
 export default function DappOptions({ dapp }) {
   const { isStorageProcessing, updateDapp, removeDapp } = React.useContext(StorageContext);
   const { setStateContext } = React.useContext(StateContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const actions = React.useMemo(
     () => [
       {
@@ -50,7 +50,7 @@ export default function DappOptions({ dapp }) {
             const resolvedSkylink = await getResolvedSkylink(dapp.resolverSkylink);
 
             if (resolvedSkylink !== dapp.skylink) {
-              history.push(`/skylink/${dapp.resolverSkylink}`);
+              navigate(`/skylink/${dapp.resolverSkylink}`);
 
               toast.dismiss(toastId);
             } else {
@@ -102,7 +102,7 @@ export default function DappOptions({ dapp }) {
         },
       },
     ],
-    [isStorageProcessing, history, removeDapp, updateDapp, setStateContext]
+    [isStorageProcessing, navigate, removeDapp, updateDapp, setStateContext]
   );
 
   return (
