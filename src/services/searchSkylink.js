@@ -117,7 +117,7 @@ export default async function searchSkylink(input) {
 
 async function requestSkylink(address) {
   try {
-    const response = await ky.head(address);
+    const response = await fetch(address, { method: "HEAD", credentials: "include" });
     const skylink = response.headers.get("skynet-skylink");
 
     if (skylink) return skylink;
