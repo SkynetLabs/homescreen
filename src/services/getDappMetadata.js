@@ -36,8 +36,7 @@ export default async function getDappMetadata(skylink) {
 
   try {
     // grab skylinkUrl for use in fetching metadata.
-    // Doesn't use subdomain:true to ensure JWT cookie gets sent
-    const skylinkUrl = await skynetClient.getSkylinkUrl(skylink);
+    const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
     const contentType = (await fetch(skylinkUrl, { method: "HEAD", credentials: "include" })).headers.get(
       "content-type"
     );
