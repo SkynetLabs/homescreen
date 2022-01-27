@@ -1,4 +1,4 @@
-import ky from "ky-universal";
+import ky from "ky";
 import { getMetadata } from "page-metadata-parser";
 import ogs from "open-graph-scraper-lite";
 import skynetClient from "../services/skynetClient";
@@ -36,8 +36,9 @@ export default async function getDappMetadata(skylink) {
   const skynetMetadata = await getSkynetMetadata(skylink);
 
   try {
+    // grab skylinkUrl for use in fetching metadata.
     const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
-    const contentType = (await ky.head(skylinkUrl)).headers.get("content-type");
+    const contentType = (await ky.head(skylinkUrl, { credentials: "include" })).headers.get("content-type");
 
     if (contentType !== "text/html") {
       return { ...emptyManifest, ...skynetMetadata };
@@ -47,7 +48,7 @@ export default async function getDappMetadata(skylink) {
     // TODO: replace with client.getFileContent() for registry verification on resolver skylinks
 
     // Grab HTML and parse. Used to find manifest URL and metadata.
-    const responseText = await ky.get(skylinkUrl).text();
+    const responseText = await ky.get(skylinkUrl, { credentials: "include" }).text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(responseText, "text/html");
 

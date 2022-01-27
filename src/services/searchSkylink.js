@@ -1,7 +1,7 @@
 import { parseSkylink, convertSkylinkToBase64 } from "skynet-js";
 import { trim } from "lodash";
 import skynetClient from "./skynetClient";
-import ky from "ky-universal";
+import ky from "ky";
 
 const SKYLINK_BASE_32_MATCHER = /^(sia:\/\/)?(?<skylink>[a-z0-9_-]{55})(\/.*)?/;
 const HNS_DOMAIN_MATCHER = /^(https?:\/\/)?(?<domain>[^.]+)\.hns/;
@@ -117,7 +117,7 @@ export default async function searchSkylink(input) {
 
 async function requestSkylink(address) {
   try {
-    const response = await ky.head(address);
+    const response = await ky.head(address, { credentials: "include" });
     const skylink = response.headers.get("skynet-skylink");
 
     if (skylink) return skylink;
