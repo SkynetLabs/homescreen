@@ -39,9 +39,6 @@ export default async function getDappMetadata(skylink) {
     // grab skylinkUrl for use in fetching metadata.
     const skylinkUrl = await skynetClient.getSkylinkUrl(skylink, { subdomain: true });
     const contentType = (await ky.head(skylinkUrl, { credentials: "include" })).headers.get("content-type");
-    // const contentType = (await fetch(skylinkUrl, { method: "HEAD", credentials: "include" })).headers.get(
-    //   "content-type"
-    // );
 
     if (contentType !== "text/html") {
       return { ...emptyManifest, ...skynetMetadata };
@@ -52,7 +49,6 @@ export default async function getDappMetadata(skylink) {
 
     // Grab HTML and parse. Used to find manifest URL and metadata.
     const responseText = await ky.get(skylinkUrl, { credentials: "include" }).text();
-    // const responseText = await (await fetch(skylinkUrl, { method: "GET", credentials: "include" })).text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(responseText, "text/html");
 
