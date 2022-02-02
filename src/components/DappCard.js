@@ -26,6 +26,8 @@ export default function DappCard({ dapp, actions = true }) {
   const iconUrl = React.useMemo(() => {
     if (dapp.metadata.icon && skylinkUrl) return new URL(dapp.metadata.icon, skylinkUrl).toString();
   }, [dapp.metadata.icon, skylinkUrl]);
+  const wasUpdated = dapp.skylinks?.length > 1;
+  const lastModificationDate = wasUpdated ? dapp.skylinks[dapp.skylinks.length - 1].addedOn : dapp.addedOn;
 
   return (
     <div key={dapp.skylink} className="col-span-1 flex shadow-sm rounded-md border border-palette-200">
@@ -47,9 +49,8 @@ export default function DappCard({ dapp, actions = true }) {
 
           {dapp.addedOn && (
             <p className="text-palette-300 text-xs flex items-center flex-row truncate">
-              <ClockIcon className="w-4 inline-flex mr-1 flex-shrink-0" />{" "}
-              {dapp.skylinks.length > 1 ? "updated" : "installed"}{" "}
-              <RelativeDate date={dapp.skylinks[dapp.skylinks.length - 1].addedOn} />
+              <ClockIcon className="w-4 inline-flex mr-1 flex-shrink-0" /> {wasUpdated ? "updated" : "installed"}{" "}
+              <RelativeDate date={lastModificationDate} />
             </p>
           )}
         </div>
