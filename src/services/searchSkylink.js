@@ -107,7 +107,7 @@ export default async function searchSkylink(input) {
 
   if (input.match(IPFS_CID_MATCHER)) {
     const { groups } = input.match(IPFS_CID_MATCHER);
-    const skylink = migrateIpfsToSkylink(groups.cid);
+    const skylink = await migrateIpfsToSkylink(groups.cid);
 
     if (skylink) return skylink;
   }
@@ -121,6 +121,9 @@ async function requestSkylink(address) {
     const skylink = response.headers.get("skynet-skylink");
 
     if (skylink) return skylink;
+
+    const cid = response.headers.get("x-ipfs-root-cid");
+    if (cid) return migrateIpfsToSkylink(cid);
   } catch {
     return null;
   }
