@@ -80,20 +80,6 @@ export default async function searchSkylink(input) {
     }
   }
 
-  // any arbitrary url
-  if (input.startsWith("https://")) {
-    const skylink = await requestSkylink(input);
-
-    if (skylink) return skylink;
-  }
-
-  if (input.match(/^[^./]+$/)) {
-    const address = await skynetClient.getHnsUrl(input);
-    const skylink = await requestSkylink(address);
-
-    if (skylink) return skylink;
-  }
-
   if (input.match(IPNS_MATCHER)) {
     try {
       const { groups } = input.match(IPNS_MATCHER);
@@ -112,6 +98,22 @@ export default async function searchSkylink(input) {
     if (skylink) return skylink;
   }
 
+  // as last resort, try and do a HEAD call and check whether the response
+  // includes either a `skynet-skylink` or `x-ipfs-root-cid` response header
+  try {
+    const response = await ky.head(address, { credentials: "include" });
+
+    // check for `skynet-skylink` header
+    const skylink = response.headers.get("skynet-skylink");
+    if (skylink) return skylink;
+
+    // check for `x-ipfs-root-cid` header
+    const cid = response.headers.get("x-ipfs-root-cid");
+    if (cid) return migrateIpfsToSkylink(cid);
+  } catch(error) {
+    // do nothing
+  }
+
   return null;
 }
 
@@ -121,9 +123,6 @@ async function requestSkylink(address) {
     const skylink = response.headers.get("skynet-skylink");
 
     if (skylink) return skylink;
-
-    const cid = response.headers.get("x-ipfs-root-cid");
-    if (cid) return migrateIpfsToSkylink(cid);
   } catch {
     return null;
   }
