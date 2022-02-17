@@ -80,6 +80,11 @@ export default async function searchSkylink(input) {
     }
   }
 
+  // if it's an url - get the skylink from headers
+  if (input.match(/^https?:\/\//)) {
+    return getSkylinkFromHeaders(input);
+  }
+
   // the following matches any string without dots and checks whether they're
   // hns domains, this catches input like 'uniswap' or 'skyfeed'
   if (input.match(/^[^./]+$/)) {
@@ -107,7 +112,7 @@ export default async function searchSkylink(input) {
     if (skylink) return skylink;
   }
 
-  // any arbitrary url
+  // as a last resort, create url from input and check the headers
   const address = ensureValidUrl(input);
   const skylink = await getSkylinkFromHeaders(address);
 
@@ -139,7 +144,7 @@ async function getSkylinkFromHeaders(address) {
     console.log(error.response.status);
     console.log(error.response.headers);
 
-    console.log('trying without credentials...')
+    console.log("trying without credentials...");
     try {
       const response = await ky.head(address);
       // check for `skynet-skylink` header
@@ -149,7 +154,7 @@ async function getSkylinkFromHeaders(address) {
       // check for `x-ipfs-root-cid` header
       const cid = response.headers.get("x-ipfs-root-cid");
       if (cid) return migrateIpfsToSkylink(cid);
-    } catch(error) {
+    } catch (error) {
       console.log(error);
       console.log(error.response.data);
       console.log(error.response.status);
