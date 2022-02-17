@@ -135,9 +135,11 @@ async function getSkylinkFromHeaders(address) {
     if (cid) return migrateIpfsToSkylink(cid);
   } catch (error) {
     console.log(error);
-    console.log(error.response.data);
-    console.log(error.response.status);
-    console.log(error.response.headers);
+    if (error && error.response) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    }
 
     console.log('trying without credentials...')
     try {
@@ -151,9 +153,11 @@ async function getSkylinkFromHeaders(address) {
       if (cid) return migrateIpfsToSkylink(cid);
     } catch(error) {
       console.log(error);
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
+      if (error && error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      }
     }
     return null;
   }
