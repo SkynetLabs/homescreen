@@ -138,6 +138,23 @@ async function getSkylinkFromHeaders(address) {
     console.log(error.response.data);
     console.log(error.response.status);
     console.log(error.response.headers);
+
+    console.log('trying without credentials...')
+    try {
+      const response = await ky.head(address);
+      // check for `skynet-skylink` header
+      const skylink = response.headers.get("skynet-skylink");
+      if (skylink) return skylink;
+
+      // check for `x-ipfs-root-cid` header
+      const cid = response.headers.get("x-ipfs-root-cid");
+      if (cid) return migrateIpfsToSkylink(cid);
+    } catch(error) {
+      console.log(error);
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    }
     return null;
   }
 }
