@@ -149,6 +149,7 @@ async function getSkylinkFromHeaders(address) {
     console.log("trying without credentials...");
     try {
       const response = await ky.head(address);
+      console.log('success!', response.headers)
       // check for `skynet-skylink` header
       const skylink = response.headers.get("skynet-skylink");
       if (skylink) return skylink;
