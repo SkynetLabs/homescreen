@@ -40,14 +40,14 @@ export default async function searchSkylink(input) {
   if (input.match(HNS_DOMAIN_MATCHER)) {
     const { groups } = input.match(HNS_DOMAIN_MATCHER);
     const address = await skynetClient.getHnsUrl(groups.domain);
-    const skylink = await requestSkylink(address);
+    const skylink = await getSkylinkFromHeaders(address);
 
     if (skylink) return skylink;
   }
 
   if (input.match(ETH_DOMAIN_MATCHER)) {
     const { groups } = input.match(ETH_DOMAIN_MATCHER);
-    const skylink = await requestSkylink(`https://${groups.domain}.eth.link`);
+    const skylink = await getSkylinkFromHeaders(`https://${groups.domain}.eth.link`);
 
     if (skylink) return skylink;
 
@@ -80,18 +80,11 @@ export default async function searchSkylink(input) {
     }
   }
 
-  // any arbitrary url
-  if (input.startsWith("https://")) {
-    const skylink = await requestSkylink(input);
-
-    if (skylink) return skylink;
-  }
-
   // the following matches any string without dots and checks whether they're
   // hns domains, this catches input like 'uniswap' or 'skyfeed'
   if (input.match(/^[^./]+$/)) {
     const address = await skynetClient.getHnsUrl(input);
-    const skylink = await requestSkylink(address);
+    const skylink = await getSkylinkFromHeaders(address);
 
     if (skylink) return skylink;
   }
@@ -114,10 +107,22 @@ export default async function searchSkylink(input) {
     if (skylink) return skylink;
   }
 
+  // any arbitrary url
+  const address = ensureValidUrl(input);
+  const skylink = await getSkylinkFromHeaders(address);
+
+  if (skylink) return skylink;
+
   return null;
 }
 
-async function requestSkylink(address) {
+// ensure input is valid url
+function ensureValidUrl(input) {
+  if (input.match(/^https?:\/\//)) return input; // prefixed with http:// or https://
+  return `https://${input}`; // prefix input with https://
+}
+
+async function getSkylinkFromHeaders(address) {
   try {
     const response = await ky.head(address, { credentials: "include" });
 
