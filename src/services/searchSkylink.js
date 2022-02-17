@@ -133,7 +133,11 @@ async function getSkylinkFromHeaders(address) {
     // check for `x-ipfs-root-cid` header
     const cid = response.headers.get("x-ipfs-root-cid");
     if (cid) return migrateIpfsToSkylink(cid);
-  } catch {
+  } catch (error) {
+    console.log(error);
+    console.log(error.response.data);
+    console.log(error.response.status);
+    console.log(error.response.headers);
     return null;
   }
 }
