@@ -45,6 +45,15 @@ export default async function searchSkylink(input) {
     if (skylink) return skylink;
   }
 
+  // the following matches any string without dots and checks whether they're
+  // hns domains, this catches input like 'uniswap' or 'skyfeed'
+  if (input.match(/^[^./]+$/)) {
+    const address = await skynetClient.getHnsUrl(input);
+    const skylink = await requestSkylink(address);
+
+    if (skylink) return skylink;
+  }
+
   if (input.match(ETH_DOMAIN_MATCHER)) {
     const { groups } = input.match(ETH_DOMAIN_MATCHER);
     const skylink = await requestSkylink(`https://${groups.domain}.eth.link`);
