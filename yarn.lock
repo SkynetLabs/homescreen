@@ -1251,10 +1251,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/source-code-pro/-/source-code-pro-4.5.1.tgz#7be223bf73e489330e5ad97de430251cda4ff0fb"
   integrity sha512-NVTR9MBd5Dkzd6JDolLft0KM92RISbw0rhNKUuywGMxovAD7LypE5Cb4u0+lAylV3tRzQkLAsspCwMLzclscdQ==
 
-"@fontsource/source-sans-pro@^4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@fontsource/source-sans-pro/-/source-sans-pro-4.5.1.tgz#9c4f2b6061d38cd85e89fde21893e23b8a7f227c"
-  integrity sha512-JYEldSfnqxoDVUL6QgqT8Fiyjh0p7WlKcqKNevzDylpWabdejVRyFzPhTk2ZceKZd02KEOaL+K462U6u0/PQiA==
+"@fontsource/source-sans-pro@^4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/source-sans-pro/-/source-sans-pro-4.5.6.tgz#1c74aa0168f0ad851e7c69a5ff25914c7691b6cb"
+  integrity sha512-MPv0Ye2OmcRD4wQ/7lOkysQpXpWkDSqZ2QHdNNLj7CQVtG03BScLMYQXZbYNhNMbH518tdMFewqDSu+/ikAMTg==
 
 "@gar/promisify@^1.0.1":
   version "1.1.2"
@@ -8125,21 +8125,6 @@ nanocolors@^0.2.2, nanocolors@^0.2.6, nanocolors@^0.2.8:
   integrity sha512-SFNdALvzW+rVlzqexid6epYdt8H9Zol7xDoQarioEFcFN0JHo4CYNztAxmtfgGTVRCmFlEOqqhBpoFGKqSAMug==
 
 nanoid@^3.2.0, nanoid@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
-  integrity sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==
-
-nanoid@^3.2.0:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
-  integrity sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==
-
-nanoid@^3.2.0:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
-  integrity sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==
-
-nanoid@^3.2.0:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
   integrity sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==
