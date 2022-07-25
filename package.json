@@ -31,7 +31,7 @@
     "react-scripts": "4.0.3",
     "react-toastify": "^8.1.0",
     "react-use": "^17.3.2",
-    "skynet-js": "^4.0.17-beta",
+    "skynet-js": "^4.3.0",
     "spinkit": "^2.0.1",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
