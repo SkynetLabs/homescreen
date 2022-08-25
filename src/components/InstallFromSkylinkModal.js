@@ -202,7 +202,7 @@ export default function InstallFromSkylinkModal() {
                       <p className="text-orange-500 inline-flex items-center space-x-2">
                         <ExclamationIcon className="w-4 h-4 mr-2" /> manifest is missing or misconfigured:
                         <Link
-                          href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app#3-configure-your-manifest-file"
+                          href="https://docs.skynetlabs.com/integrations/homescreen/adding-homescreen-support-to-an-app#3.-configure-your-manifest-file"
                           className="text-orange-500 hover:text-orange-600 inline-flex items-center"
                         >
                           read more
