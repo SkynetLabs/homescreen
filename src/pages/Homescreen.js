@@ -79,13 +79,13 @@ export default function Homescreen() {
 
             <div className="flex flex-col space-y-1 text-right">
               <Link
-                href="https://support.siasky.net/key-concepts/homescreen"
+                href="https://support.skynetlabs.com/key-concepts/homescreen"
                 className="inline-flex items-center justify-end text-xs transition-colors text-palette-400 hover:text-primary"
               >
                 Documentation and FAQ <ExternalLink className="inline-block fill-current" height={18} />
               </Link>
               <Link
-                href="https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app"
+                href="https://docs.skynetlabs.com/integrations/homescreen/adding-homescreen-support-to-an-app"
                 className="inline-flex items-center justify-end text-xs transition-colors text-palette-400 hover:text-primary"
               >
                 Add Homescreen Support to Your App <ExternalLink className="inline-block fill-current" height={18} />

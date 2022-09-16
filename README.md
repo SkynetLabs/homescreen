@@ -6,9 +6,9 @@ Homescreen provides a way for users to save immutable versions of application fr
 
 **Additional Info**
 
-- [Skynet Developer Guide - Homescreen](https://docs.siasky.net/integrations/homescreen)
-- [Adding Homescreen Support to an App](https://docs.siasky.net/integrations/homescreen/adding-homescreen-support-to-an-app)
-- [Skynet User Guide - Homescreen](https://support.siasky.net/key-concepts/homescreen)
+- [Skynet Developer Guide - Homescreen](https://docs.skynetlabs.com/integrations/homescreen)
+- [Adding Homescreen Support to an App](https://docs.skynetlabs.com/integrations/homescreen/adding-homescreen-support-to-an-app)
+- [Skynet User Guide - Homescreen](https://support.skynetlabs.com/key-concepts/homescreen)
 
 ## Build Locally
 
