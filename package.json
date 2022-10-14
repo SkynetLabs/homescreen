@@ -14,7 +14,7 @@
     "classnames": "^2.3.1",
     "clipboardy": "^2.3.0",
     "css-what": "^6.0.1",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.11.5",
     "formik": "^2.2.9",
     "ky": "^0.31.1",
     "lodash-es": "^4.17.21",
